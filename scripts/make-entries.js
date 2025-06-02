@@ -1,9 +1,10 @@
 document.getElementById('propertyForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    e.preventDefault();componentDidCatch(error, info) {
+    }
     const form = e.target;
     const formData = new FormData(form);
   
-    const res = await fetch('http://localhost:5000/api/property/register', {
+    const res = await fetch(`${backendURL}/api/property/register`, {
       method: 'POST',
       body: formData
     });

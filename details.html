@@ -1,4 +1,3 @@
-<!-- details.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,6 +43,7 @@
   <header>
     <h1>E-constructor</h1>
   </header>
+
   <nav class="navbar">
     <ul>
       <li><a href="index.html">Home</a></li>
@@ -52,12 +52,85 @@
       <li><a href="other.html">Other</a></li>
     </ul>
   </nav>
+
   <main>
     <h2>View Property Details</h2>
-    <label for="search-method">Search property:</label>
-    <input type="string" placeholder="Enter search value...">
-    <input type="number" placeholder="county number...">
-    <button>Search</button>
+
+    <label for="lrNumber">Search by LR number and county:</label><br>
+    <input type="text" id="lrNumber" placeholder="Enter LR number" pattern="[\w\/]+" title="Only letters, numbers, and slashes allowed">
+    <input type="number" id="countyNumber" placeholder="County number...">
+    <button onclick="searchProperty()">Search</button><br><br>
+
+    <div id="property-info"></div>
+
+    <h3>Scan QR to View this Property:</h3>
+    <div id="qr-reader" style="width: 300px"></div>
+    <div id="qr-result"></div>
   </main>
+
+  <!-- Load QR scanner library -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+  <script>
+    // Handle QR Code scan success
+    function onScanSuccess(decodedText, decodedResult) {
+      window.location.href = decodedText;
+    }
+
+    const html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      onScanSuccess
+    ).catch(err => console.error("QR Scanner Error:", err));
+
+    // Fetch property details using LR and County
+    function searchProperty() {
+      const lr = document.getElementById('lrNumber').value.trim();
+      const county = document.getElementById('countyNumber').value.trim();
+
+      if (!lr || !county) {
+        alert("Please enter both LR number and county.");
+        return;
+      }
+
+      fetch(`https://e-constructor-production.up.railway.app/api/property/search?lr=${encodeURIComponent(lr)}&county=${encodeURIComponent(county)}`)
+        .then(res => res.json())
+        .then(data => {
+          const display = document.getElementById('property-info');
+          if (data && data.property) {
+            const prop = data.property;
+            display.innerHTML = `
+              <h4>${prop.name || "Unnamed Property"}</h4>
+              <p><strong>LR Number:</strong> ${prop.lrNumber}</p>
+              <p><strong>County:</strong> ${prop.county}</p>
+              <p><strong>Status:</strong> ${prop.status}</p>
+              <p><strong>Purpose:</strong> ${prop.purpose}</p>
+              <a href="${prop.qrCodeUrl}" target="_blank">View Digital Certificate (QR)</a>
+            `;
+          } else {
+            display.innerHTML = "<p>No property found with that LR and county.</p>";
+          }
+        })
+        .catch(err => {
+          console.error("Search failed:", err);
+          document.getElementById('property-info').innerHTML = "<p>Error searching for property.</p>";
+        });
+    }
+
+    // Auto-run search if query parameters are present
+    window.onload = function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("lr") && urlParams.has("county")) {
+        const lr = urlParams.get("lr");
+        const county = urlParams.get("county");
+
+        document.getElementById('lrNumber').value = lr;
+        document.getElementById('countyNumber').value = county;
+        searchProperty();
+      }
+    }
+  </script>
+
 </body>
 </html>

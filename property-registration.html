@@ -60,64 +60,74 @@
   </main>
   
   <script>
-    // Simulate fetching number of floors from permit system
-    async function fetchBuildingFloorsFromPermitSystem(lrNumber) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const mockFloors = {
-            "LR12345": 5,
-            "LR54321": 8,
-            "LR67890": 12
-          };
-          resolve(mockFloors[lrNumber] || 6); // default to 6 floors
-        }, 1000);
-      });
+  // Simulate fetching number of floors from permit system
+  async function fetchBuildingFloorsFromPermitSystem(lrNumber) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const mockFloors = {
+          "LR12345": 5,
+          "LR54321": 8,
+          "LR67890": 12
+        };
+        resolve(mockFloors[lrNumber] || 6); // default to 6 floors
+      }, 1000);
+    });
+  }
+
+  document.getElementById('lrNumber').addEventListener('blur', async function () {
+    const lr = this.value.trim().toUpperCase();
+    if (lr) {
+      const floors = await fetchBuildingFloorsFromPermitSystem(lr);
+      document.getElementById('floors').value = floors;
+      document.getElementById('estimatedTime').textContent =
+        `Estimated Completion Time: ${floors} month(s) (1 month per floor)`;
     }
+  });
 
-    document.getElementById('lrNumber').addEventListener('blur', async function () {
-      const lr = this.value.trim().toUpperCase();
-      if (lr) {
-        const floors = await fetchBuildingFloorsFromPermitSystem(lr);
-        document.getElementById('floors').value = floors;
-        document.getElementById('estimatedTime').textContent = 
-          `Estimated Completion Time: ${floors} month(s) (1 month per floor)`;
-      }
-    });
+  document.getElementById('propertyForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-    document.getElementById('propertyForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
 
-      const form = e.target;
-      const formData = new FormData(form);
+    const phoneNumber = formData.get('phone');
+    const amount = 100; // fixed registration fee
+    const purpose = 'registration';
 
-      const phoneNumber = formData.get('phone');
-      const amount = 100; // fixed registration fee
-      const purpose = 'registration';
+    try {
+      // Step 1: Trigger M-Pesa STK Push
+      const stkResponse = await fetch('https://e-constructor-production.up.railway.app/api/mpesa/stk-push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber, amount, purpose })
+      });
 
-      try {
-        const stkResponse = await fetch('/api/mpesa/stk-push', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phoneNumber, amount, purpose })
-        });
+      const stkData = await stkResponse.json();
+      alert(stkData.message || 'M-Pesa payment initiated');
 
-        const stkData = await stkResponse.json();
-        alert(stkData.message || 'M-Pesa payment initiated');
+      // Step 2: Submit property registration to backend
+      const registerResponse = await fetch('https://e-constructor-production.up.railway.app/api/register-property', {
+        method: 'POST',
+        body: formData
+      });
 
-        // Continue with registration
-        const registerResponse = await fetch('/api/register-property', {
-          method: 'POST',
-          body: formData
-        });
+      const result = await registerResponse.json();
 
-        const result = await registerResponse.json();
+      if (registerResponse.ok) {
         alert(result.message || 'Property registered successfully');
-
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Something went wrong. Please try again.');
+        // 👇 Redirect to details page using returned propertyId
+        if (result.propertyId) {
+          window.location.href = `details.html?id=${result.propertyId}`;
+        }
+      } else {
+        alert(result.error || 'Property registration failed');
       }
-    });
-  </script>
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong. Please try again.');
+    }
+  });
+</script>
+
 </body>
 </html>

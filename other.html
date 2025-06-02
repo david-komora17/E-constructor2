@@ -146,82 +146,62 @@
   </main>
   <script>
     // JavaScript logic to handle landlord negligence report and freezing process
-
 document.addEventListener("DOMContentLoaded", function () {
-  const reportForm = document.querySelector("form");
+  const reportForm = document.getElementById("report-form");
 
   reportForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const buildingId = reportForm.querySelector("input[type='text']").value;
-    const issueDescription = reportForm.querySelector("textarea").value;
-    const evidenceFile = reportForm.querySelector("input[type='file']").files[0];
+    const buildingId = reportForm.querySelector("input[name='buildingId']").value;
+    const issueDescription = reportForm.querySelector("textarea[name='issueDescription']").value;
+    const evidenceFile = reportForm.querySelector("input[name='evidence']").files[0];
 
     if (!buildingId || !issueDescription || !evidenceFile) {
       alert("All fields are required, including an image.");
       return;
     }
 
-    // Step 1: Submit the report to the backend
     const formData = new FormData();
     formData.append("buildingId", buildingId);
     formData.append("description", issueDescription);
     formData.append("evidence", evidenceFile);
 
     try {
-      const reportRes = await fetch("/api/report", {
+      const reportRes = await fetch("https://e-constructor-production.up.railway.app/api/report", {
         method: "POST",
         body: formData
       });
 
       const reportData = await reportRes.json();
-
       if (!reportRes.ok) throw new Error(reportData.message);
 
-      // Step 2: Initiate freeze request immediately after valid complaint
-      const freezeRes = await fetch("/api/freeze", {
+      const freezeRes = await fetch("https://e-constructor-production.up.railway.app/api/freeze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ buildingId })
       });
 
       const freezeData = await freezeRes.json();
-
       if (!freezeRes.ok) throw new Error(freezeData.message);
 
-      // Step 3: Query M-Pesa for total deposits by affected tenants
       const depositsRes = await fetch(`/api/tenant-deposits?buildingId=${buildingId}`);
       const depositData = await depositsRes.json();
-
       if (!depositsRes.ok) throw new Error(depositData.message);
 
       const { totalDeposits, tenantCount } = depositData;
       const compensationAmount = totalDeposits + totalDeposits * 0.10;
 
-      // Step 4: Await magistrate ruling via admin panel/SMS trigger
-      // This would be handled on the server side and triggered later
-      alert(
-        `Report submitted successfully. Compensation estimated at KES ${compensationAmount}. Awaiting magistrate approval to disburse funds.`
-      );
+      alert(`✅ Report submitted. Estimated compensation: KES ${compensationAmount}. Awaiting magistrate approval.`);
+
+      reportForm.reset();
 
     } catch (err) {
       console.error("Error:", err);
-      alert("Failed to submit report or process freeze: " + err.message);
-
-      // Step 5: Log reporter info in case of spam (to be handled server-side)
+      alert("❌ Failed to submit report: " + err.message);
     }
   });
 });
-  document.getElementById("report-form").addEventListener("submit", function (e) {
-    e.preventDefault(); // Prevent page reload
 
-    const status = document.getElementById("report-status");
-    status.textContent = "✅ Report submitted successfully. Thank you for helping improve safety.";
-    status.style.color = "lightgreen";
-
-    // Optionally clear the form
-    this.reset();
-  });
  </script>
 
 </body>
