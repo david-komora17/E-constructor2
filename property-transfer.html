@@ -22,40 +22,40 @@
   </nav>
 
   <main>
-    <form id="ownershipForm"  enctype="multipart/form-data" class="entry-form">
+    <form id="ownershipForm" class="entry-form">
       <h2>Ownership Change Form</h2>
 
       <label for="property_postal_address"><strong>Postal Address of the Proposed Project</strong></label>
-      <input type="text" id="property_postal_address" name="property_postal_address" required>
+      <input type="text" id="property_postal_address" name="property_postal_address" required />
 
-      <label for="buildingId"><strong>Building LR Number</strong></label>
-      <input type="text" id="buildingId" name="building_lr_number" required>
+      <label for="building_lr_number"><strong>Building LR Number</strong></label>
+      <input type="text" id="building_lr_number" name="building_lr_number" required />
 
-      <label for="formerOwner"><strong>Former Property Owner ID / Company License Number</strong></label>
-      <input type="text" id="formerOwner" name="former_owner_id" required>
+      <label for="former_owner_id"><strong>Former Property Owner ID / Company License Number</strong></label>
+      <input type="text" id="former_owner_id" name="former_owner_id" required />
 
-      <label for="enterPin"><strong>Enter outgoing owner's E-constructor PIN</strong></label>
-      <input type="password" id="enterPin" name="enter_pin" required><br>
+      <label for="enter_pin"><strong>Enter outgoing owner's E-constructor PIN</strong></label>
+      <input type="password" id="enter_pin" name="enter_pin" required />
 
-      <label for="newOwner"><strong>Proposed Property Owner ID / Company License Number</strong></label>
-      <input type="text" id="newOwner" name="new_owner_id" required>
+      <label for="new_owner_id"><strong>Proposed Property Owner ID / Company License Number</strong></label>
+      <input type="text" id="new_owner_id" name="new_owner_id" required />
 
-      <label for="resetPin"><strong>Reset Your E-constructor PIN</strong></label>
-      <input type="password" id="resetPin" name="reset_pin" required>
+      <label for="reset_pin"><strong>Reset Your E-constructor PIN</strong></label>
+      <input type="password" id="reset_pin" name="reset_pin" required />
 
       <label for="phone"><strong>Your Phone Number (for SMS verification)</strong></label>
-      <input type="tel" id="phone" name="phone" required pattern="[\d+]{10,15}">
+      <input type="tel" id="phone" name="phone" required pattern="[\d+]{10,15}" />
 
-      <label><strong>Purpose of Construction</strong></label><br>
-      <input type="radio" name="entryType" value="for_rent" id="rentalproperty" required>
-      <label for="rentalproperty">Property for Rent</label><br>
-      <input type="radio" name="entryType" value="for_sale" id="propertyforsale">
-      <label for="propertyforsale">Property for Sale</label>
+      <label><strong>Purpose of Construction</strong></label><br />
+      <input type="radio" name="entryType" value="for_rent" id="rentalproperty" required />
+      <label for="rentalproperty">Property for Rent</label><br />
+      <input type="radio" name="entryType" value="for_sale" id="propertyforsale" />
+      <label for="propertyforsale">Property for Sale</label><br />
 
       <label>
-        <input type="checkbox" name="former_owner_consent" required>
+        <input type="checkbox" name="former_owner_consent" required />
         I, the former property owner, give full consent to permanently transfer legal ownership, financial responsibility, and management rights of this property to the proposed new owner.
-      </label><br><br>
+      </label><br /><br />
 
       <button type="submit">Submit Form</button>
     </form>
@@ -63,12 +63,11 @@
 
   <footer>
     <div>
-      <img src="pickering.png" class="image" alt="E-constructor logo">
+      <img src="pickering.png" class="image" alt="E-constructor logo" />
       <p>Need help? Reach out to our support team for guidance.</p>
     </div>
   </footer>
 
-  <!-- JavaScript -->
-  <script type="module" src="./ownership.js"></script>
+  <script type="module" src="ownership.js"></script>
 </body>
 </html>

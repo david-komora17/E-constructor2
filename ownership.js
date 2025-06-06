@@ -1,9 +1,13 @@
+// ownership.js
 import { backendURL } from './config.js';
 
 document.getElementById('ownershipForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const form = e.target;
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+
   const data = {
     property_postal_address: form.property_postal_address.value,
     building_lr_number: form.building_lr_number.value,
@@ -13,24 +17,31 @@ document.getElementById('ownershipForm').addEventListener('submit', async (e) =>
     reset_pin: form.reset_pin.value,
     phone: form.phone.value,
     entryType: form.entryType.value,
-    former_owner_consent: form.former_owner_consent.checked,
+    former_owner_consent: form.former_owner_consent.checked
   };
 
   try {
     const res = await fetch(`${backendURL}/api/property/change-ownership`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(data)
     });
 
     const result = await res.json();
+
     if (res.ok) {
       alert(result.message || 'Ownership change submitted successfully.');
+      form.reset();
     } else {
       alert(result.message || 'An error occurred.');
     }
   } catch (err) {
     console.error('Request failed:', err);
     alert('Server error. Please try again later.');
+  } finally {
+    submitBtn.disabled = false;
   }
 });
+
