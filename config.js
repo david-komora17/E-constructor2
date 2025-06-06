@@ -1,4 +1,4 @@
 // config.js
 
-const backendURL = 'https://e-constructor-production.up.railway.app';
+const backendURL = 'https://e-constructor2-backend-clean.onrender.com';
 export { backendURL };

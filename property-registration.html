@@ -96,7 +96,7 @@
 
     try {
       // Step 1: Trigger M-Pesa STK Push
-      const stkResponse = await fetch('https://e-constructor-production.up.railway.app/api/mpesa/stk-push', {
+      const stkResponse = await fetch('https://e-constructor2-backend-clean.onrender.com/api/mpesa/stk-push', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber, amount, purpose })
@@ -106,7 +106,7 @@
       alert(stkData.message || 'M-Pesa payment initiated');
 
       // Step 2: Submit property registration to backend
-      const registerResponse = await fetch('https://e-constructor-production.up.railway.app/api/register-property', {
+      const registerResponse = await fetch('https://e-constructor2-backend-clean.onrender.com/api/register-property', {
         method: 'POST',
         body: formData
       });

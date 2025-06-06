@@ -76,7 +76,7 @@
     const message = `Eviction Alert: A property at ${address} is flagged for unlawful occupation. Full case details: ${evictionLink}`;
   
     // Send to police API (replace with your actual endpoint or SMS gateway)
-    const response = await fetch("https://e-constructor-production.up.railway.app/api/notify-police", {
+    const response = await fetch("https://e-constructor2-backend-clean.onrender.com/api/notify-police", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -106,7 +106,7 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
   const message = `Dear tenant, please review your lease terms here: ${leaseLink}. Accept or decline accordingly.`;
 
   // Send SMS via backend
-  const response = await fetch("https://e-constructor-production.up.railway.app/api/send-sms", {
+  const response = await fetch("https://e-constructor2-backend-clean.onrender.com/api/send-sms", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phone, message })

@@ -21,7 +21,7 @@
       const phone = document.getElementById("phone").value;
       const amount = document.getElementById("amount").value;
 
-      const response = await fetch("https://e-constructor-production.up.railway.app/api/mpesa/stkpush", {
+      const response = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/stkpush", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, amount }),

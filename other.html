@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
     formData.append("evidence", evidenceFile);
 
     try {
-      const reportRes = await fetch("https://e-constructor-production.up.railway.app/api/report", {
+      const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
         method: "POST",
         body: formData
       });
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const reportData = await reportRes.json();
       if (!reportRes.ok) throw new Error(reportData.message);
 
-      const freezeRes = await fetch("https://e-constructor-production.up.railway.app/api/freeze", {
+      const freezeRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/freeze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ buildingId })

@@ -94,7 +94,7 @@
         return;
       }
 
-      fetch(`https://e-constructor-production.up.railway.app/api/property/search?lr=${encodeURIComponent(lr)}&county=${encodeURIComponent(county)}`)
+      fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/search?lr=${encodeURIComponent(lr)}&county=${encodeURIComponent(county)}`)
         .then(res => res.json())
         .then(data => {
           const display = document.getElementById('property-info');
