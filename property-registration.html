@@ -106,7 +106,7 @@
       alert(stkData.message || 'M-Pesa payment initiated');
 
       // Step 2: Submit property registration to backend
-      const registerResponse = await fetch('https://e-constructor2-backend-clean.onrender.com/api/register-property', {
+      const registerResponse = await fetch('https://e-constructor2-backend-clean.onrender.com/api/property', {
         method: 'POST',
         body: formData
       });
