@@ -96,7 +96,7 @@
 
     try {
       // Step 1: Trigger M-Pesa STK Push
-      const stkResponse = await fetch('https://e-constructor2-backend-clean.onrender.com/api/mpesa/stk-push', {
+      const stkResponse = await fetch('https://e-constructor2-backend-clean.onrender.com/api/mpesa/stkpush', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber, amount, purpose })
