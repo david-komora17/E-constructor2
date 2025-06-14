@@ -59,7 +59,7 @@
     </form>
   </main>
   
-  <script>
+ <script>
   // Simulate fetching number of floors from permit system
   async function fetchBuildingFloorsFromPermitSystem(lrNumber) {
     return new Promise((resolve) => {
@@ -90,7 +90,7 @@
     const form = e.target;
     const formData = new FormData(form);
 
-    const phoneNumber = formData.get('phone');
+    const phone = formData.get('phone'); // match backend key
     const amount = 100; // fixed registration fee
     const purpose = 'registration';
 
@@ -99,23 +99,23 @@
       const stkResponse = await fetch('https://e-constructor2-backend-clean.onrender.com/api/mpesa/stkpush', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber, amount, purpose })
+        body: JSON.stringify({ phone, amount, purpose }) // ✅ fix: use 'phone'
       });
 
       const stkData = await stkResponse.json();
-      alert(stkData.message || 'M-Pesa payment initiated');
+      alert(stkData.CustomerMessage || 'M-Pesa payment initiated');
 
       // Step 2: Submit property registration to backend
       const registerResponse = await fetch('https://e-constructor2-backend-clean.onrender.com/api/property', {
         method: 'POST',
         body: formData
+        // ❗️Don't set Content-Type manually — let browser set correct boundary
       });
 
       const result = await registerResponse.json();
 
       if (registerResponse.ok) {
         alert(result.message || 'Property registered successfully');
-        // 👇 Redirect to details page using returned propertyId
         if (result.propertyId) {
           window.location.href = `details.html?id=${result.propertyId}`;
         }
