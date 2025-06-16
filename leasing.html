@@ -65,103 +65,66 @@
     <button type="submit">Initiate Eviction</button>
   </form>
 </section>
-<script>
-  document.getElementById("evictionForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-  
-    const address = document.getElementById("evict-address").value;
-    const encodedAddress = encodeURIComponent(address);
-    const evictionLink = `https://yourdomain.com/property-location?address=${encodedAddress}`;
-  
-    const message = `Eviction Alert: A property at ${address} is flagged for unlawful occupation. Full case details: ${evictionLink}`;
-  
-    // Send to police API (replace with your actual endpoint or SMS gateway)
-    const response = await fetch("https://e-constructor2-backend-clean.onrender.com/api/notify-police", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message,
-        address
-      })
-    });
-  
-    const result = await response.json();
-  
-    if (result.success) {
-      alert("Eviction initiated. Police station has been notified.");
-    } else {
-      alert("Failed to notify police: " + result.error);
-    }
-  });
-   
-  
+
+  <script>
 document.getElementById("leaseForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const phone = document.getElementById("tenant-phone").value;
-  const tenantId = document.getElementById("tenant-id").value;
+  const form = e.target;
+  const formData = new FormData();
 
-  const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
+  // Collect input values
+  const propertyId = document.getElementById("building-lr").value.trim();
+  const leaseFile = document.getElementById("lease-agreement").files[0];
+  const phone = document.getElementById("tenant-phone").value.trim();
+  const tenantId = document.getElementById("tenant-id").value.trim();
 
-  const message = `Dear tenant, please review your lease terms here: ${leaseLink}. Accept or decline accordingly.`;
+  if (!propertyId || !leaseFile || !phone || !tenantId) {
+    alert("❌ Please fill all required fields.");
+    return;
+  }
 
-  // Send SMS via backend
-  const response = await fetch("https://e-constructor2-backend-clean.onrender.com/api/send-sms", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phone, message })
-  });
+  // Append fields for backend
+  formData.append("propertyId", propertyId);
+  formData.append("leaseAgreement", leaseFile);
 
-  const result = await response.json();
+  try {
+    // Upload the lease agreement
+    const uploadRes = await fetch("https://E-constructor2-backend-clean.onrender.com/api/property/upload-lease", {
+      method: "POST",
+      body: formData,
+    });
 
-  if (result.success) {
-    alert("Lease submitted and SMS sent to tenant.");
-  } else {
-    alert("Error sending SMS: " + result.error);
+    const uploadResult = await uploadRes.json();
+
+    if (!uploadRes.ok) {
+      throw new Error(uploadResult.message || "Lease upload failed");
+    }
+
+    // After upload, send SMS to tenant
+    const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
+    const message = `Dear tenant, please review your lease terms here: ${leaseLink}. Accept or decline accordingly.`;
+
+    const smsRes = await fetch("https://E-constructor2-backend-clean.onrender.com/api/send-sms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, message }),
+    });
+
+    const smsResult = await smsRes.json();
+
+    if (!smsRes.ok || !smsResult.success) {
+      throw new Error("Lease uploaded, but failed to send SMS.");
+    }
+
+    alert("✅ Lease uploaded and SMS sent to tenant.");
+    form.reset();
+  } catch (err) {
+    console.error("❌ Upload or SMS error:", err);
+    alert("❌ " + err.message);
   }
 });
-
-  document.querySelector("#lease-form").addEventListener("submit", function (e) {
-    e.preventDefault(); // Stop form from refreshing page
-
-    const phoneInput = document.querySelector("#tenant-phone").value.trim();
-    const tenantId = document.querySelector("#tenant-id").value.trim();
-
-    const message = `Dear Tenant (${tenantId}), your lease agreement is ready. Please review and respond at: https://yourdomain.com/lease-review`;
-
-    // Validate phone format (basic check)
-    if (!phoneInput.startsWith("+254") || phoneInput.length < 12) {
-      alert("Enter a valid Kenyan phone number with country code, e.g. +2547XXXXXXX");
-      return;
-    }
- 
-    fetch("/api/send-sms", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        to: phoneInput,
-        message: message
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert("SMS sent successfully!");
-      console.log(data);
-    })
-    .catch(error => {
-      alert("Failed to send SMS.");
-      console.error(error);
-    });
-  });
-  <form id="propertyForm">
-  <!-- form fields like phoneNumber, amount -->
-  <button type="submit">Submit</button>
-  </form>
-
 </script>
-
   
 </body>
 </html>
