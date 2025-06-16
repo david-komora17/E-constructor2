@@ -72,71 +72,51 @@
   </footer>
 
   <script type="module" src="">
-  document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("ownershipForm");
+  document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('ownershipForm');
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if (!form) {
+    console.error("❌ Form not found: #ownershipForm");
+    return;
+  }
 
-    const newOwnerID = document.getElementById("new_owner_id").value.trim();
-    const postalAddress = document.getElementById("property_postal_address").value.trim();
-    const lrNumber = document.getElementById("building_lr_number").value.trim();
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // ✅ Prevent page refresh
 
-    // Basic field validation
-    if (!newOwnerID || !postalAddress || !lrNumber) {
-      alert("❌ Please fill in all required fields (Postal Address, LR Number, and New Owner ID).");
-      return;
-    }
+    const newOwnerID = document.getElementById('new_owner_id').value;
+    const postalAddress = document.getElementById('property_postal_address').value;
+    const lrNumber = document.getElementById('building_lr_number').value;
 
     try {
-      // Step 1: Find property by LR number + postal address
+      // Step 1: Get property ID from backend
       const searchRes = await fetch(
-        `https://e-constructor2-backend-clean.onrender.com/api/property/search?query=${encodeURIComponent(lrNumber)}`
+        `https://e-constructor2-backend-clean.onrender.com/api/property/search?postalAddress=${encodeURIComponent(postalAddress)}&lrNumber=${encodeURIComponent(lrNumber)}`
       );
-
       const searchData = await searchRes.json();
 
-      if (!searchRes.ok || !searchData.results || searchData.results.length === 0) {
-        alert("❌ Property not found. Please confirm LR Number and Address.");
+      if (!searchRes.ok || !searchData.propertyId) {
+        alert("❌ Property not found. Please double-check LR Number and Postal Address.");
         return;
       }
 
-      // Try to match the correct property if multiple results found
-      const matchedProperty = searchData.results.find(
-        (prop) => prop.postalAddress.trim() === postalAddress
-      );
+      const propertyId = searchData.propertyId;
 
-      if (!matchedProperty) {
-        alert("⚠️ No matching property found for this address and LR Number.");
-        return;
-      }
-
-      const propertyId = matchedProperty._id;
-
-      // Step 2: Send ownership change request
-      const changeRes = await fetch(
-        "https://e-constructor2-backend-clean.onrender.com/api/property/change-ownership",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ propertyId, newOwnerID })
-        }
-      );
+      // Step 2: Submit ownership change
+      const changeRes = await fetch('https://e-constructor2-backend-clean.onrender.com/api/property/change-ownership', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ propertyId, newOwnerID })
+      });
 
       const changeData = await changeRes.json();
-
-      if (!changeRes.ok) {
-        throw new Error(changeData.message || "Server rejected the request");
-      }
-
-      alert("✅ " + changeData.message);
-      form.reset();
+      alert(changeData.message);
     } catch (err) {
-      console.error("❌ Ownership transfer failed:", err);
-      alert("❌ Something went wrong. Please try again later.");
+      console.error("⚠️ Ownership transfer failed:", err);
+      alert("Something went wrong during ownership transfer.");
     }
   });
 });
+
 
   </script>
 </body>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -23,27 +23,26 @@
 
   <main>
     <section id="court-docs" class="entry-form">
-  <h2>Upload Court Documents</h2>
+      <h2>Upload Court Documents</h2>
 
-  <form action="submit-court-docs.php" method="POST" enctype="multipart/form-data">
-    <label for="courtCaseId"><strong>Court Case ID</strong> (e.g., Civil Case Number X of 2023)</label>
-    <input type="text" id="courtCaseId" name="court_case_id" placeholder="Court Case ID" required>
+      <form id="courtDocsForm" method="POST" enctype="multipart/form-data">
+        <label for="courtCaseId"><strong>Court Case ID</strong> (e.g., Civil Case Number X of 2023)</label>
+        <input type="text" id="courtCaseId" name="court_case_id" placeholder="Court Case ID" required>
 
-    <label for="courtDocument"><strong>Upload or Take Photo of Court Document</strong></label>
-    <input
-      type="file"
-      id="courtDocument"
-      name="court_documents[]"
-      accept=".pdf, .docx, .jpg, .jpeg, .png"
-      multiple
-      capture="environment"
-      required
-    >
+        <label for="courtDocument"><strong>Upload or Take Photo of Court Document</strong></label>
+        <input
+          type="file"
+          id="courtDocument"
+          name="court_documents"
+          accept=".pdf, .docx, .jpg, .jpeg, .png"
+          multiple
+          capture="environment"
+          required
+        >
 
-    <button type="submit">Submit Form</button>
-  </form>
-</section>
-
+        <button type="submit">Submit Form</button>
+      </form>
+    </section>
   </main>
 
   <footer>
@@ -53,5 +52,29 @@
     </div>
   </footer>
 
+  <script>
+    document.getElementById('courtDocsForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Stop form from refreshing the page
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch('https://your-backend-url.onrender.com/api/court-docs', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) throw new Error('Failed to submit court documents');
+
+        const result = await res.json();
+        alert('Court documents submitted successfully!');
+        form.reset();
+      } catch (err) {
+        console.error('Submission error:', err);
+        alert('Error submitting form. Please try again.');
+      }
+    });
+  </script>
 </body>
 </html>
