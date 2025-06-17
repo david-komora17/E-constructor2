@@ -81,65 +81,97 @@
   </form>
 </section>
 <script>
- document.getElementById("leaseForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
+  document.getElementById("leaseForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  const postalAddress = document.getElementById("building-address").value.trim();
-  const lrNumber = document.getElementById("building-lr").value.trim();
-  const leaseFile = document.getElementById("lease-agreement").files[0];
-  const phone = document.getElementById("tenant-phone").value.trim();
-  const tenantId = document.getElementById("tenant-id").value.trim();
+    const form = e.target;
+    const formData = new FormData(form);
 
-  if (!postalAddress || !lrNumber || !leaseFile || !phone || !tenantId) {
-    alert("❌ Please fill all required fields.");
-    return;
-  }
+    const lrNumber = document.getElementById("building-lr").value.trim();
+    const postalAddress = document.getElementById("building-address").value.trim();
+    const leaseFile = document.getElementById("lease-agreement").files[0];
+    const phone = document.getElementById("tenant-phone").value.trim();
+    const tenantId = document.getElementById("tenant-id").value.trim();
 
-  try {
-    // ✅ Step 1: Get propertyId
-    const searchRes = await fetch(`https://E-constructor2-backend-clean.onrender.com/api/property/search?postalAddress=${encodeURIComponent(postalAddress)}&lrNumber=${encodeURIComponent(lrNumber)}`);
-    const searchResult = await searchRes.json();
-
-    if (!searchRes.ok || !searchResult.propertyId) {
-      throw new Error("❌ Property not found. Please check LR number and address.");
+    if (!lrNumber || !postalAddress || !leaseFile || !phone || !tenantId) {
+      alert("❌ Please fill all required fields.");
+      return;
     }
 
-    const propertyId = searchResult.propertyId;
+    // STEP 1: SEARCH for the propertyId
+    let propertyId = null;
+    try {
+      const searchUrl = `https://e-constructor2-backend-clean.onrender.com/api/property/search?lrNumber=${encodeURIComponent(lrNumber)}&postalAddress=${encodeURIComponent(postalAddress)}`;
+      
+      const searchRes = await fetch(searchUrl);
+      const contentType = searchRes.headers.get("content-type");
 
-    // ✅ Step 2: Upload lease
-    const formData = new FormData();
-    formData.append("propertyId", propertyId);
-    formData.append("leaseAgreement", leaseFile);
+      if (!searchRes.ok) {
+        const text = await searchRes.text();
+        throw new Error(`Search failed: ${searchRes.status} - ${text}`);
+      }
 
-    const uploadRes = await fetch("https://E-constructor2-backend-clean.onrender.com/api/property/upload-lease", {
-      method: "POST",
-      body: formData,
-    });
+      if (!contentType.includes("application/json")) {
+        const text = await searchRes.text();
+        throw new Error(`Expected JSON, got: ${text.substring(0, 100)}`);
+      }
 
-    const uploadResult = await uploadRes.json();
-    if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
+      const searchData = await searchRes.json();
+      propertyId = searchData.propertyId;
+    } catch (err) {
+      console.error("❌ Property search error:", err);
+      alert("❌ Property not found or search failed.");
+      return;
+    }
 
-    // ✅ Step 3: Send SMS
-    const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
-    const message = `Dear tenant, please review your lease terms here: ${leaseLink}. Accept or decline accordingly.`;
+    // STEP 2: Upload lease agreement
+    const leaseFormData = new FormData();
+    leaseFormData.append("propertyId", propertyId);
+    leaseFormData.append("leaseAgreement", leaseFile);
 
-    const smsRes = await fetch("https://E-constructor2-backend-clean.onrender.com/api/send-sms", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, message }),
-    });
+    try {
+      const leaseRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/property/upload-lease", {
+        method: "POST",
+        body: leaseFormData
+      });
 
-    const smsResult = await smsRes.json();
-    if (!smsRes.ok || !smsResult.success) throw new Error("Lease uploaded, but failed to send SMS.");
+      const contentType = leaseRes.headers.get("content-type");
+      const leaseText = await leaseRes.text();
 
-    alert("✅ Lease uploaded and SMS sent to tenant.");
-    e.target.reset();
-  } catch (err) {
-    console.error("❌ Upload or SMS error:", err);
-    alert(err.message);
-  }
-});
+      if (!leaseRes.ok) {
+        throw new Error(`Lease upload failed: ${leaseRes.status} - ${leaseText}`);
+      }
+
+      if (!contentType.includes("application/json")) {
+        throw new Error(`Lease upload expected JSON, got: ${leaseText.substring(0, 100)}`);
+      }
+
+      const leaseResult = JSON.parse(leaseText);
+
+      // STEP 3: Send SMS to tenant
+      const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
+      const message = `Dear tenant, please review your lease terms here: ${leaseLink}`;
+
+      const smsRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/sms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, message })
+      });
+
+      const smsResult = await smsRes.json();
+      if (!smsResult.success) {
+        throw new Error("SMS failed: " + smsResult.error);
+      }
+
+      alert("✅ Lease uploaded and SMS sent to tenant.");
+      form.reset();
+    } catch (err) {
+      console.error("❌ Upload or SMS error:", err);
+      alert("❌ " + err.message);
+    }
+  });
 </script>
+
 
   
 </body>
