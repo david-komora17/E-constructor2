@@ -80,37 +80,34 @@
     <button type="submit">Initiate Eviction</button>
   </form>
 </section>
-
-  <script>
-document.getElementById("leaseForm").addEventListener("submit", async function (e) {
+<script>
+ document.getElementById("leaseForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const form = e.target;
-  const formData = new FormData();
-
-  const lrNumber = document.getElementById("building-lr").value.trim();
   const postalAddress = document.getElementById("building-address").value.trim();
+  const lrNumber = document.getElementById("building-lr").value.trim();
   const leaseFile = document.getElementById("lease-agreement").files[0];
   const phone = document.getElementById("tenant-phone").value.trim();
   const tenantId = document.getElementById("tenant-id").value.trim();
 
-  if (!lrNumber || !postalAddress || !leaseFile || !phone || !tenantId) {
+  if (!postalAddress || !lrNumber || !leaseFile || !phone || !tenantId) {
     alert("❌ Please fill all required fields.");
     return;
   }
 
   try {
-    // Step 1: Search for propertyId
-    const searchRes = await fetch(`https://E-constructor2-backend-clean.onrender.com/api/property/search?lrNumber=${encodeURIComponent(lrNumber)}&postalAddress=${encodeURIComponent(postalAddress)}`);
-    const searchData = await searchRes.json();
+    // ✅ Step 1: Get propertyId
+    const searchRes = await fetch(`https://E-constructor2-backend-clean.onrender.com/api/property/search?postalAddress=${encodeURIComponent(postalAddress)}&lrNumber=${encodeURIComponent(lrNumber)}`);
+    const searchResult = await searchRes.json();
 
-    if (!searchRes.ok || !searchData.propertyId) {
-      throw new Error("❌ Property not found with the given LR Number and Address.");
+    if (!searchRes.ok || !searchResult.propertyId) {
+      throw new Error("❌ Property not found. Please check LR number and address.");
     }
 
-    const propertyId = searchData.propertyId;
+    const propertyId = searchResult.propertyId;
 
-    // Step 2: Upload lease
+    // ✅ Step 2: Upload lease
+    const formData = new FormData();
     formData.append("propertyId", propertyId);
     formData.append("leaseAgreement", leaseFile);
 
@@ -119,13 +116,10 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
       body: formData,
     });
 
-    const uploadData = await uploadRes.json();
+    const uploadResult = await uploadRes.json();
+    if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
 
-    if (!uploadRes.ok) {
-      throw new Error(uploadData.message || "❌ Lease upload failed");
-    }
-
-    // Step 3: Send SMS
+    // ✅ Step 3: Send SMS
     const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
     const message = `Dear tenant, please review your lease terms here: ${leaseLink}. Accept or decline accordingly.`;
 
@@ -135,16 +129,13 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
       body: JSON.stringify({ phone, message }),
     });
 
-    const smsData = await smsRes.json();
-
-    if (!smsRes.ok || !smsData.success) {
-      throw new Error("✅ Lease uploaded but SMS failed to send.");
-    }
+    const smsResult = await smsRes.json();
+    if (!smsRes.ok || !smsResult.success) throw new Error("Lease uploaded, but failed to send SMS.");
 
     alert("✅ Lease uploaded and SMS sent to tenant.");
-    form.reset();
+    e.target.reset();
   } catch (err) {
-    console.error("❌ Error:", err);
+    console.error("❌ Upload or SMS error:", err);
     alert(err.message);
   }
 });
