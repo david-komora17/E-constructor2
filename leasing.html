@@ -89,28 +89,28 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
   const formData = new FormData();
 
   const lrNumber = document.getElementById("building-lr").value.trim();
+  const postalAddress = document.getElementById("building-address").value.trim();
   const leaseFile = document.getElementById("lease-agreement").files[0];
   const phone = document.getElementById("tenant-phone").value.trim();
   const tenantId = document.getElementById("tenant-id").value.trim();
-  const postalAddress = "Nairobi"; // You can make this dynamic if needed
 
-  if (!lrNumber || !leaseFile || !phone || !tenantId) {
+  if (!lrNumber || !postalAddress || !leaseFile || !phone || !tenantId) {
     alert("❌ Please fill all required fields.");
     return;
   }
 
   try {
-    // Step 1: Search property by LR Number
+    // Step 1: Search for propertyId
     const searchRes = await fetch(`https://E-constructor2-backend-clean.onrender.com/api/property/search?lrNumber=${encodeURIComponent(lrNumber)}&postalAddress=${encodeURIComponent(postalAddress)}`);
     const searchData = await searchRes.json();
 
     if (!searchRes.ok || !searchData.propertyId) {
-      throw new Error("❌ Property not found using that LR number.");
+      throw new Error("❌ Property not found with the given LR Number and Address.");
     }
 
     const propertyId = searchData.propertyId;
 
-    // Step 2: Upload the lease
+    // Step 2: Upload lease
     formData.append("propertyId", propertyId);
     formData.append("leaseAgreement", leaseFile);
 
@@ -120,11 +120,12 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
     });
 
     const uploadData = await uploadRes.json();
+
     if (!uploadRes.ok) {
       throw new Error(uploadData.message || "❌ Lease upload failed");
     }
 
-    // Step 3: Send SMS to tenant
+    // Step 3: Send SMS
     const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
     const message = `Dear tenant, please review your lease terms here: ${leaseLink}. Accept or decline accordingly.`;
 
@@ -137,13 +138,13 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
     const smsData = await smsRes.json();
 
     if (!smsRes.ok || !smsData.success) {
-      throw new Error("❌ Lease uploaded but SMS failed.");
+      throw new Error("✅ Lease uploaded but SMS failed to send.");
     }
 
     alert("✅ Lease uploaded and SMS sent to tenant.");
     form.reset();
   } catch (err) {
-    console.error("❌ Upload/SMS error:", err);
+    console.error("❌ Error:", err);
     alert(err.message);
   }
 });
