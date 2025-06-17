@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-constructor</title>
-    <link rel="stylesheet" href="e-constructor2.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-constructor</title>
+  <link rel="stylesheet" href="e-constructor2.css">
 </head>
+
 <body>
   <header>
     <h1>E-constructor</h1>
@@ -20,159 +22,164 @@
     </ul>
   </nav>
 
-<!-- Leasing Agreement -->
-<section id="lease-upload" class="entry-form">
-  <h3>Upload Leasing Terms and Conditions</h3>
-  <form id="leaseForm">
-    <label for="building-address">Postal Address</label><br>
-    <input type="text" id="building-address" placeholder="e.g. 1234 Nairobi Ave" required /><br><br>
+  <!-- Leasing Agreement -->
+  <section id="lease-upload" class="entry-form">
+    <h3>Upload Leasing Terms and Conditions</h3>
+    <form id="leaseForm">
+      <label for="building-address">Postal Address</label><br>
+      <input type="text" id="building-address" placeholder="e.g. 1234 Nairobi Ave" required /><br><br>
 
-    <label for="building-lr">Building LR Number</label><br>
-    <input type="text" id="building-lr" required /><br><br>
+      <label for="building-lr">Building LR Number</label><br>
+      <input type="text" id="building-lr" required /><br><br>
 
-    <label for="occupancy-cert">Occupancy Certificate</label><br>
-    <input type="file" id="occupancy-cert" accept=".pdf" required /><br><br>
+      <label for="occupancy-cert">Occupancy Certificate</label><br>
+      <input type="file" id="occupancy-cert" accept=".pdf" required /><br><br>
 
-    <label for="lease-agreement">Leasing Agreement</label><br>
-    <input type="file" id="lease-agreement" accept=".pdf" required /><br><br>
+      <label for="lease-agreement">Leasing Agreement</label><br>
+      <input type="file" id="lease-agreement" accept=".pdf" required /><br><br>
 
-    <label for="tenant-id">Tenant Name or ID</label><br>
-    <input type="text" id="tenant-id" placeholder="Tenant Name or ID" required /><br><br>
+      <label for="tenant-id">Tenant Name or ID</label><br>
+      <input type="text" id="tenant-id" placeholder="Tenant Name or ID" required /><br><br>
 
-    <label for="tenant-phone">Tenant Phone Number (for SMS)</label><br>
-    <input type="tel" id="tenant-phone" placeholder="+2547XXXXXXXX" required /><br><br>
+      <label for="tenant-phone">Tenant Phone Number (for SMS)</label><br>
+      <input type="tel" id="tenant-phone" placeholder="+2547XXXXXXXX" required /><br><br>
 
-    <label for="monthly-rent">Monthly Rent Amount</label><br>
-    <input type="number" id="monthly-rent" placeholder="Monthly Rent Amount" required /><br><br>
+      <label for="monthly-rent">Monthly Rent Amount</label><br>
+      <input type="number" id="monthly-rent" placeholder="Monthly Rent Amount" required /><br><br>
 
-    <label for="service-charges">Service Charges</label><br>
-    <input type="text" id="service-charges" placeholder="" required /><br><br>
+      <label for="service-charges">Service Charges</label><br>
+      <input type="text" id="service-charges" placeholder="" required /><br><br>
 
-    <label for="lease-start">Lease Start Date</label><br>
-    <input type="date" id="lease-start" required /><br><br>
+      <label for="lease-start">Lease Start Date</label><br>
+      <input type="date" id="lease-start" required /><br><br>
 
-    <button type="submit">Submit lease Info</button>
-  </form>
-</section>
+      <button type="submit">Submit lease Info</button>
+    </form>
+  </section>
 
-<!-- Tenant Eviction -->
-<section id="tenant-eviction" class="entry-form">
-  <h3>Tenant Eviction</h3>
-  <form id="evictionForm">
-    <label for="evict-tenant-id">Tenant Name or ID</label><br>
-    <input type="text" id="evict-tenant-id" placeholder="Tenant Name or ID" required /><br><br>
+  <!-- Tenant Eviction -->
+  <section id="tenant-eviction" class="entry-form">
+    <h3>Tenant Eviction</h3>
+    <form id="evictionForm">
+      <label for="evict-tenant-id">Tenant Name or ID</label><br>
+      <input type="text" id="evict-tenant-id" placeholder="Tenant Name or ID" required /><br><br>
 
-    <label for="evict-address">Property Address (with location details)</label><br>
-    <input type="text" id="evict-address" placeholder="e.g. 1234 Riverside Drive, Nairobi" required /><br><br>
+      <label for="evict-address">Property Address (with location details)</label><br>
+      <input type="text" id="evict-address" placeholder="e.g. 1234 Riverside Drive, Nairobi" required /><br><br>
 
-    <label for="evict-charges">Eviction Charges</label><br>
-    <input type="text" id="evict-charges" placeholder="e.g. KES 5,000" required /><br><br>
+      <label for="evict-charges">Eviction Charges</label><br>
+      <input type="text" id="evict-charges" placeholder="e.g. KES 5,000" required /><br><br>
 
-    <label for="magistrate-name">Magistrate Name</label><br>
-    <input type="text" id="magistrate-name" required /><br><br>
+      <label for="magistrate-name">Magistrate Name</label><br>
+      <input type="text" id="magistrate-name" required /><br><br>
 
-    <label for="jsc-id">JSC Identifier</label><br>
-    <input type="text" id="jsc-id" required /><br><br>
+      <label for="jsc-id">JSC Identifier</label><br>
+      <input type="text" id="jsc-id" required /><br><br>
 
-    <label for="evict-start-date">Eviction Due Date</label><br>
-    <input type="date" id="evict-start-date" required /><br><br>
+      <label for="evict-start-date">Eviction Due Date</label><br>
+      <input type="date" id="evict-start-date" required /><br><br>
 
-    <button type="submit">Initiate Eviction</button>
-  </form>
-</section>
-<script>
-  document.getElementById("leaseForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
+      <button type="submit">Initiate Eviction</button>
+    </form>
+  </section>
+  <script>
+    document.getElementById("leaseForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    const form = e.target;
-    const formData = new FormData(form);
+      const form = e.target;
+      const formData = new FormData(form);
 
-    const lrNumber = document.getElementById("building-lr").value.trim();
-    const postalAddress = document.getElementById("building-address").value.trim();
-    const leaseFile = document.getElementById("lease-agreement").files[0];
-    const phone = document.getElementById("tenant-phone").value.trim();
-    const tenantId = document.getElementById("tenant-id").value.trim();
+      const lrNumber = document.getElementById("building-lr").value.trim();
+      const postalAddress = document.getElementById("building-address").value.trim();
+      const leaseFile = document.getElementById("lease-agreement").files[0];
+      const phone = document.getElementById("tenant-phone").value.trim();
+      const tenantId = document.getElementById("tenant-id").value.trim();
 
-    if (!lrNumber || !postalAddress || !leaseFile || !phone || !tenantId) {
-      alert("❌ Please fill all required fields.");
-      return;
-    }
-
-    // STEP 1: SEARCH for the propertyId
-    let propertyId = null;
-    try {
-      const searchUrl = `https://e-constructor2-backend-clean.onrender.com/api/property/search?lrNumber=${encodeURIComponent(lrNumber)}&postalAddress=${encodeURIComponent(postalAddress)}`;
-      
-      const searchRes = await fetch(searchUrl);
-      const contentType = searchRes.headers.get("content-type");
-
-      if (!searchRes.ok) {
-        const text = await searchRes.text();
-        throw new Error(`Search failed: ${searchRes.status} - ${text}`);
+      if (!lrNumber || !postalAddress || !leaseFile || !phone || !tenantId) {
+        alert("❌ Please fill all required fields.");
+        return;
       }
 
-      if (!contentType.includes("application/json")) {
-        const text = await searchRes.text();
-        throw new Error(`Expected JSON, got: ${text.substring(0, 100)}`);
+      // STEP 1: SEARCH for the propertyId
+      let propertyId = null;
+      try {
+        const searchUrl = `https://e-constructor2-backend-clean.onrender.com/api/property/search?lrNumber=${encodeURIComponent(lrNumber)}&postalAddress=${encodeURIComponent(postalAddress)}`;
+
+        const searchRes = await fetch(searchUrl);
+        const contentType = searchRes.headers.get("content-type");
+
+        if (!searchRes.ok) {
+          const text = await searchRes.text();
+          throw new Error(`Search failed: ${searchRes.status} - ${text}`);
+        }
+
+        if (!contentType.includes("application/json")) {
+          const text = await searchRes.text();
+          throw new Error(`Expected JSON, got: ${text.substring(0, 100)}`);
+        }
+
+        const searchData = await searchRes.json();
+        propertyId = searchData.propertyId;
+      } catch (err) {
+        console.error("❌ Property search error:", err);
+        alert("❌ Property not found or search failed.");
+        return;
       }
 
-      const searchData = await searchRes.json();
-      propertyId = searchData.propertyId;
-    } catch (err) {
-      console.error("❌ Property search error:", err);
-      alert("❌ Property not found or search failed.");
-      return;
-    }
+      // STEP 2: Upload lease agreement
+      const leaseFormData = new FormData();
+      leaseFormData.append("propertyId", propertyId);
+      leaseFormData.append("leaseAgreement", leaseFile);
 
-    // STEP 2: Upload lease agreement
-    const leaseFormData = new FormData();
-    leaseFormData.append("propertyId", propertyId);
-    leaseFormData.append("leaseAgreement", leaseFile);
+      try {
+        const leaseRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/property/upload-lease", {
+          method: "POST",
+          body: leaseFormData
+        });
 
-    try {
-      const leaseRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/property/upload-lease", {
-        method: "POST",
-        body: leaseFormData
-      });
+        const contentType = leaseRes.headers.get("content-type");
+        const leaseText = await leaseRes.text();
 
-      const contentType = leaseRes.headers.get("content-type");
-      const leaseText = await leaseRes.text();
+        if (!leaseRes.ok) {
+          throw new Error(`Lease upload failed: ${leaseRes.status} - ${leaseText}`);
+        }
 
-      if (!leaseRes.ok) {
-        throw new Error(`Lease upload failed: ${leaseRes.status} - ${leaseText}`);
+        if (!contentType.includes("application/json")) {
+          throw new Error(`Lease upload expected JSON, got: ${leaseText.substring(0, 100)}`);
+        }
+
+        const leaseResult = JSON.parse(leaseText);
+
+        // STEP 3: Send SMS to tenant
+        const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
+        const message = `Dear tenant, please review your lease terms here: ${leaseLink}`;
+
+        const smsRes = await fetch("https://E-constructor2-backend-clean.onrender.com/api/sms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: phone,               // ✅ renamed from 'phone' to 'to'
+            message: message
+          }),
+        });
+
+
+        const smsResult = await smsRes.json();
+        if (!smsResult.success) {
+          throw new Error("SMS failed: " + smsResult.error);
+        }
+
+        alert("✅ Lease uploaded and SMS sent to tenant.");
+        form.reset();
+      } catch (err) {
+        console.error("❌ Upload or SMS error:", err);
+        alert("❌ " + err.message);
       }
-
-      if (!contentType.includes("application/json")) {
-        throw new Error(`Lease upload expected JSON, got: ${leaseText.substring(0, 100)}`);
-      }
-
-      const leaseResult = JSON.parse(leaseText);
-
-      // STEP 3: Send SMS to tenant
-      const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
-      const message = `Dear tenant, please review your lease terms here: ${leaseLink}`;
-
-      const smsRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/sms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, message })
-      });
-
-      const smsResult = await smsRes.json();
-      if (!smsResult.success) {
-        throw new Error("SMS failed: " + smsResult.error);
-      }
-
-      alert("✅ Lease uploaded and SMS sent to tenant.");
-      form.reset();
-    } catch (err) {
-      console.error("❌ Upload or SMS error:", err);
-      alert("❌ " + err.message);
-    }
-  });
-</script>
+    });
+  </script>
 
 
-  
+
 </body>
+
 </html>
