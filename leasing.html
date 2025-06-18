@@ -89,17 +89,17 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
   const form = e.target;
   const formData = new FormData();
 
-  // ✅ Get values
   const postalAddress = document.getElementById("building-address").value.trim();
   const lrNumber = document.getElementById("building-lr").value.trim();
   const leaseFile = document.getElementById("lease-agreement").files[0];
-  const phoneRaw = document.getElementById("tenant-phone").value.trim();
+  const rawPhone = document.getElementById("tenant-phone").value.trim();
   const tenantId = document.getElementById("tenant-id").value.trim();
 
-  // ✅ Validate phone format
-  let phone = phoneRaw;
-  if (!phone.startsWith("+254")) {
-    phone = "+254" + phone.slice(-9);
+  // ✅ Format Kenyan phone number
+  let phone = rawPhone.replace(/\s+/g, "").replace(/^0/, "+254").replace(/^254/, "+254");
+  if (!/^\+2547\d{8}$/.test(phone)) {
+    alert("❌ Invalid phone number. Use format +2547XXXXXXXX");
+    return;
   }
 
   if (!postalAddress || !lrNumber || !leaseFile || !tenantId || !phone) {
@@ -107,11 +107,10 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
     return;
   }
 
-  formData.append("propertyId", `${postalAddress}|${lrNumber}`); // combined key
+  formData.append("propertyId", `${postalAddress}|${lrNumber}`);
   formData.append("leaseAgreement", leaseFile);
 
   try {
-    // ✅ Upload lease agreement
     const uploadRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/property/upload-lease", {
       method: "POST",
       body: formData,
@@ -120,7 +119,6 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
     const uploadResult = await uploadRes.json();
     if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
 
-    // ✅ Send SMS with lease link
     const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
     const smsRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/sms", {
       method: "POST",
@@ -139,8 +137,6 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
   }
 });
 </script>
-
-
 
 </body>
 
