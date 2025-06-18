@@ -121,10 +121,11 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
 
     const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
     const smsRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/sms", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ to: phone, message: `Dear tenant, access your lease here: ${leaseLink}` }),
-    });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ to: phone, message: `Dear tenant, access your lease here: ${leaseLink}` }),
+});
+
 
     const smsResult = await smsRes.json();
     if (!smsResult.success) throw new Error("SMS failed: " + smsResult.error);
