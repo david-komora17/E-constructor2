@@ -97,7 +97,7 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
 
   // ✅ Format Kenyan phone number
   let phone = rawPhone.replace(/\s+/g, "").replace(/^0/, "+254").replace(/^254/, "+254");
-  if (!/^\+2547\d{8}$/.test(phone)) {
+  if (!/^\+254\d{8}$/.test(phone)) {
     alert("❌ Invalid phone number. Use format +2547XXXXXXXX");
     return;
   }
