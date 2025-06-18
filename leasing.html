@@ -82,6 +82,7 @@
       <button type="submit">Initiate Eviction</button>
     </form>
   </section>
+  
   <script>
 document.getElementById("leaseForm").addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -89,19 +90,29 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
   const form = e.target;
   const formData = new FormData();
 
+  // ✅ Extract values from form
   const postalAddress = document.getElementById("building-address").value.trim();
   const lrNumber = document.getElementById("building-lr").value.trim();
   const leaseFile = document.getElementById("lease-agreement").files[0];
-  const rawPhone = document.getElementById("tenant-phone").value.trim();
+  const phoneRaw = document.getElementById("tenant-phone").value.trim();
   const tenantId = document.getElementById("tenant-id").value.trim();
 
-  // ✅ Format Kenyan phone number
-  let phone = rawPhone.replace(/\s+/g, "").replace(/^0/, "+254").replace(/^254/, "+254");
-  if (!/^\+254\d{8}$/.test(phone)) {
-    alert("❌ Invalid phone number. Use format +2547XXXXXXXX");
+  // ✅ Sanitize and validate Kenyan phone number
+  let phone = phoneRaw.replace(/\s+/g, ""); // Remove all spaces
+  if (phone.startsWith("0")) {
+    phone = "+254" + phone.slice(1);
+  } else if (phone.startsWith("254")) {
+    phone = "+254" + phone.slice(3);
+  } else if (!phone.startsWith("+254")) {
+    phone = "+254" + phone.slice(-9); // fallback for last 9 digits
+  }
+
+  if (!/^\+2547\d{8}$/.test(phone)) {
+    alert("❌ Invalid phone number. Use format: +2547XXXXXXXX");
     return;
   }
 
+  // ✅ Validate required fields
   if (!postalAddress || !lrNumber || !leaseFile || !tenantId || !phone) {
     alert("❌ Please fill all required fields.");
     return;
@@ -111,6 +122,7 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
   formData.append("leaseAgreement", leaseFile);
 
   try {
+    // ✅ Upload lease agreement
     const uploadRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/property/upload-lease", {
       method: "POST",
       body: formData,
@@ -119,13 +131,13 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
     const uploadResult = await uploadRes.json();
     if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
 
+    // ✅ Send SMS with lease link
     const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
     const smsRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/sms", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ to: phone, message: `Dear tenant, access your lease here: ${leaseLink}` }),
-});
-
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to: phone, message: `Dear tenant, access your lease here: ${leaseLink}` }),
+    });
 
     const smsResult = await smsRes.json();
     if (!smsResult.success) throw new Error("SMS failed: " + smsResult.error);
@@ -138,6 +150,7 @@ document.getElementById("leaseForm").addEventListener("submit", async function (
   }
 });
 </script>
+
 
 </body>
 
