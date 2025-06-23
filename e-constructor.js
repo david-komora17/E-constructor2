@@ -1,7 +1,8 @@
 import { backendURL } from './config.js';
 
-document.getElementById('managerForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById('managerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
   const form = e.target;
   const formData = new FormData();
@@ -39,4 +40,5 @@ document.getElementById('managerForm').addEventListener('submit', async function
     console.error("❌ Submit error:", err);
     alert("❌ " + err.message);
   }
+  });
 });
