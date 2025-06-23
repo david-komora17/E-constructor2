@@ -23,7 +23,7 @@
   <main>
     <section class="entry-form">
       <h3>Terminate Manager Tenure</h3>
-      <form action="/terminate-manager" method="post">
+      <form id="terminateManagerForm">
         <label for="manager-name"><strong>Manager Name</strong></label><br>
         <input type="text" id="manager-name" name="manager-name" placeholder="Manager Name" required /><br><br>
 
@@ -45,6 +45,43 @@
     </div>
   </footer>
 
-  <script src="e-constructor.js"></script>
+  <script type="module">
+    import { backendURL } from './config.js';
+
+    document.getElementById('terminateManagerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('manager-name').value.trim();
+      const license = document.getElementById('license-number').value.trim();
+      const reason = document.getElementById('termination-reason').value.trim();
+
+      if (!name || !license || !reason) {
+        alert("❌ Please fill in all fields.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${backendURL}/api/property/terminate-manager`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            managerName: name,
+            licenseNumber: license,
+            reason
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.message || "Termination failed");
+
+        alert("✅ Manager successfully terminated.");
+        e.target.reset();
+      } catch (err) {
+        console.error("❌ Termination error:", err);
+        alert("❌ " + err.message);
+      }
+    });
+  </script>
 </body>
 </html>
