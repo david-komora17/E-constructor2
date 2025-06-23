@@ -1,30 +1,42 @@
 import { backendURL } from './config.js';
 
-const propertyList = document.getElementById('property-list'); // Example container
+document.getElementById('managerForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
 
-fetch(`${backendURL}/api/properties`)
-  .then(res => {
-    if (!res.ok) throw new Error('Failed to fetch properties');
-    return res.json();
-  })
-  .then(properties => {
-    if (!properties.length) {
-      propertyList.innerHTML = '<p>No properties found.</p>';
-      return;
+  const form = e.target;
+  const formData = new FormData();
+
+  const name = document.getElementById('manager-name').value.trim();
+  const id = document.getElementById('manager-id').value.trim();
+  const lr = document.getElementById('lr-number').value.trim();
+  const file = document.getElementById('permit-upload').files[0];
+
+  if (!name || !id || !lr || !file) {
+    alert("❌ Please fill in all fields and upload a file.");
+    return;
+  }
+
+  formData.append('manager-name', name);
+  formData.append('manager-id', id);
+  formData.append('lr-number', lr);
+  formData.append('permit-upload', file);
+
+  try {
+    const response = await fetch(`${backendURL}/api/property/submit-manager`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Upload failed");
     }
 
-    properties.forEach(p => {
-      const item = document.createElement('div');
-      item.innerHTML = `
-        <h3>LR Number: ${p.lrNumber}</h3>
-        <p>County: ${p.county}</p>
-        <p>Purpose: ${p.purpose}</p>
-        <hr/>
-      `;
-      propertyList.appendChild(item);
-    });
-  })
-  .catch(err => {
-    propertyList.innerHTML = `<p>Error loading properties: ${err.message}</p>`;
-    console.error('Fetch error:', err);
-  });
+    alert("✅ Manager credentials submitted successfully.");
+    form.reset();
+  } catch (err) {
+    console.error("❌ Submit error:", err);
+    alert("❌ " + err.message);
+  }
+});
