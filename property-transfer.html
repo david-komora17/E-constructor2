@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,7 +8,6 @@
 </head>
 
 <body>
-
   <header>
     <h1>E-constructor</h1>
   </header>
@@ -71,54 +69,56 @@
     </div>
   </footer>
 
-  <script type="module" src="">
-  document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('ownershipForm');
+  <!-- ✅ Script with proper module and event binding -->
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('ownershipForm');
 
-  if (!form) {
-    console.error("❌ Form not found: #ownershipForm");
-    return;
-  }
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault(); // ✅ Prevent page refresh
+        const newOwnerID = document.getElementById('new_owner_id').value.trim();
+        const postalAddress = document.getElementById('property_postal_address').value.trim();
+        const lrNumber = document.getElementById('building_lr_number').value.trim();
 
-    const newOwnerID = document.getElementById('new_owner_id').value;
-    const postalAddress = document.getElementById('property_postal_address').value;
-    const lrNumber = document.getElementById('building_lr_number').value;
+        if (!postalAddress || !lrNumber || !newOwnerID) {
+          alert("❌ Please fill in all required fields.");
+          return;
+        }
 
-    try {
-      // Step 1: Get property ID from backend
-      const searchRes = await fetch(
-        `https://e-constructor2-backend-clean.onrender.com/api/property/search?postalAddress=${encodeURIComponent(postalAddress)}&lrNumber=${encodeURIComponent(lrNumber)}`
-      );
-      const searchData = await searchRes.json();
+        try {
+          const searchRes = await fetch(
+            `https://e-constructor2-backend-clean.onrender.com/api/property/search?postalAddress=${encodeURIComponent(postalAddress)}&lrNumber=${encodeURIComponent(lrNumber)}`
+          );
+          const searchData = await searchRes.json();
 
-      if (!searchRes.ok || !searchData.propertyId) {
-        alert("❌ Property not found. Please double-check LR Number and Postal Address.");
-        return;
-      }
+          if (!searchRes.ok || !searchData.propertyId) {
+            alert("❌ Property not found. Please double-check LR Number and Postal Address.");
+            return;
+          }
 
-      const propertyId = searchData.propertyId;
+          const propertyId = searchData.propertyId;
 
-      // Step 2: Submit ownership change
-      const changeRes = await fetch('https://e-constructor2-backend-clean.onrender.com/api/property/change-ownership', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ propertyId, newOwnerID })
+          const changeRes = await fetch('https://e-constructor2-backend-clean.onrender.com/api/property/change-ownership', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ propertyId, newOwnerID })
+          });
+
+          const changeData = await changeRes.json();
+
+          if (!changeRes.ok) {
+            throw new Error(changeData.message || "Ownership update failed.");
+          }
+
+          alert("✅ " + changeData.message);
+          form.reset();
+        } catch (err) {
+          console.error("⚠️ Ownership transfer failed:", err);
+          alert("❌ Something went wrong during ownership transfer.");
+        }
       });
-
-      const changeData = await changeRes.json();
-      alert(changeData.message);
-    } catch (err) {
-      console.error("⚠️ Ownership transfer failed:", err);
-      alert("Something went wrong during ownership transfer.");
-    }
-  });
-});
-
-
+    });
   </script>
 </body>
-
 </html>
