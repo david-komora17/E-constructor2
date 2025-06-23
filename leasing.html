@@ -21,7 +21,7 @@
     </ul>
   </nav>
 
-  <!-- Leasing Agreement Section -->
+  <!-- Leasing Agreement Upload -->
   <section id="lease-upload" class="entry-form">
     <h3>Upload Leasing Terms and Conditions</h3>
     <form id="leaseForm">
@@ -31,20 +31,20 @@
       <label for="building-lr">Building LR Number</label><br />
       <input type="text" id="building-lr" required /><br /><br />
 
-      <label for="occupancy-cert">Occupancy Certificate</label><br />
+      <label for="occupancy-cert">Occupancy Certificate (PDF)</label><br />
       <input type="file" id="occupancy-cert" accept=".pdf" required /><br /><br />
 
-      <label for="lease-agreement">Leasing Agreement</label><br />
+      <label for="lease-agreement">Leasing Agreement (PDF)</label><br />
       <input type="file" id="lease-agreement" accept=".pdf" required /><br /><br />
 
       <label for="tenant-id">Tenant Name or ID</label><br />
       <input type="text" id="tenant-id" placeholder="Tenant Name or ID" required /><br /><br />
 
-      <label for="tenant-phone">Tenant Phone Number (e.g. +254712345678 or +254112001116)</label><br />
-      <input type="tel" id="tenant-phone" placeholder="+254XXXXXXXXX" required /><br /><br />
+      <label for="tenant-phone">Tenant Phone (+2547XXXXXXXX)</label><br />
+      <input type="tel" id="tenant-phone" placeholder="+2547XXXXXXXX" required /><br /><br />
 
       <label for="monthly-rent">Monthly Rent Amount</label><br />
-      <input type="number" id="monthly-rent" placeholder="Monthly Rent Amount" required /><br /><br />
+      <input type="number" id="monthly-rent" required /><br /><br />
 
       <label for="service-charges">Service Charges</label><br />
       <input type="text" id="service-charges" required /><br /><br />
@@ -61,13 +61,13 @@
     <h3>Tenant Eviction</h3>
     <form id="evictionForm">
       <label for="evict-tenant-id">Tenant Name or ID</label><br />
-      <input type="text" id="evict-tenant-id" placeholder="Tenant Name or ID" required /><br /><br />
+      <input type="text" id="evict-tenant-id" required /><br /><br />
 
-      <label for="evict-address">Property Address (with location details)</label><br />
-      <input type="text" id="evict-address" placeholder="e.g. 1234 Riverside Drive, Nairobi" required /><br /><br />
+      <label for="evict-address">Property Address</label><br />
+      <input type="text" id="evict-address" required /><br /><br />
 
       <label for="evict-charges">Eviction Charges</label><br />
-      <input type="text" id="evict-charges" placeholder="e.g. KES 5,000" required /><br /><br />
+      <input type="text" id="evict-charges" required /><br /><br />
 
       <label for="magistrate-name">Magistrate Name</label><br />
       <input type="text" id="magistrate-name" required /><br /><br />
@@ -82,67 +82,103 @@
     </form>
   </section>
 
-  <script>
-  document.getElementById("leaseForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form); // ✅ Correct: Pass form directly
+  <script type="module">
+    import { backendURL } from './config.js';
 
-    // 📥 Collect form values
-    const postalAddress = document.getElementById("building-address").value.trim();
-    const lrNumber = document.getElementById("building-lr").value.trim();
-    const leaseFile = document.getElementById("lease-agreement").files[0];
-    const tenantId = document.getElementById("tenant-id").value.trim();
-    let phone = document.getElementById("tenant-phone").value.trim();
+    // ✅ Lease Form Submission
+    document.getElementById("leaseForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
 
-    // ✅ Validate required fields
-    if (!postalAddress || !lrNumber || !leaseFile || !tenantId || !phone) {
-      alert("❌ Please fill all required fields.");
-      return;
-    }
+      const postalAddress = form["building-address"].value.trim();
+      const lrNumber = form["building-lr"].value.trim();
+      const leaseFile = form["lease-agreement"].files[0];
+      const phone = form["tenant-phone"].value.trim().replace(/\s+/g, "").replace(/^0/, "+254").replace(/^254/, "+254");
+      const tenantId = form["tenant-id"].value.trim();
 
-    // ✅ Normalize and validate Kenyan phone number
-    phone = phone.replace(/\s+/g, "").replace(/^0/, "+254").replace(/^254/, "+254");
-    if (!/^\+254(1\d{8}|7\d{8})$/.test(phone)) {
-      alert("❌ Invalid phone number. Use format: +2547XXXXXXXX or +2541XXXXXXXX");
-      return;
-    }
-
-    // ✅ Set additional form fields
-    formData.set("propertyId", `${postalAddress}|${lrNumber}`);
-    formData.set("leaseAgreement", leaseFile);
-
-    try {
-      // 🔄 Upload lease file
-      const uploadRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/property/upload-lease", {
-        method: "POST",
-        body: formData,
-      });
-
-      const uploadResult = await uploadRes.json();
-      if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
-
-      // 📲 Send SMS with lease link
-      const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
-      const smsRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/sms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ to: phone, message: `Dear tenant, access your lease here: ${leaseLink}` }),
-      });
-
-      const smsResult = await smsRes.json();
-      if (!smsRes.ok || smsResult.success === false) {
-        throw new Error("SMS failed: " + (smsResult.error || "Unknown error"));
+      if (!postalAddress || !lrNumber || !leaseFile || !tenantId || !phone) {
+        alert("❌ Please fill all required fields.");
+        return;
       }
 
-      alert("✅ Lease uploaded and SMS sent.");
-      form.reset();
-    } catch (err) {
-      console.error("❌ Error:", err);
-      alert("❌ " + (err.message || "An unexpected error occurred."));
-    }
-  });
-</script>
+      if (!/^\+254(1\d{8}|7\d{8})$/.test(phone)) {
+        alert("❌ Invalid phone number format.");
+        return;
+      }
 
+      formData.set("propertyId", `${postalAddress}|${lrNumber}`);
+      formData.set("leaseAgreement", leaseFile);
+
+      try {
+        const uploadRes = await fetch(`${backendURL}/api/property/upload-lease`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const uploadResult = await uploadRes.json();
+        if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
+
+        const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
+        const smsRes = await fetch(`${backendURL}/api/sms`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ to: phone, message: `Dear tenant, access your lease here: ${leaseLink}` }),
+        });
+
+        const smsResult = await smsRes.json();
+        if (!smsRes.ok || smsResult.success === false) {
+          throw new Error("SMS failed: " + (smsResult.error || "Unknown error"));
+        }
+
+        alert("✅ Lease uploaded and SMS sent.");
+        form.reset();
+      } catch (err) {
+        console.error("❌ Lease error:", err);
+        alert("❌ " + err.message);
+      }
+    });
+
+    // ✅ Eviction Form Submission
+    document.getElementById("evictionForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const tenantId = document.getElementById("evict-tenant-id").value.trim();
+      const address = document.getElementById("evict-address").value.trim();
+      const charges = document.getElementById("evict-charges").value.trim();
+      const magistrate = document.getElementById("magistrate-name").value.trim();
+      const jscId = document.getElementById("jsc-id").value.trim();
+      const dueDate = document.getElementById("evict-start-date").value;
+
+      if (!tenantId || !address || !charges || !magistrate || !jscId || !dueDate) {
+        alert("❌ Please fill in all fields.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${backendURL}/api/property/evict-tenant`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tenantId,
+            address,
+            charges,
+            magistrate,
+            jscId,
+            dueDate
+          })
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || "Eviction failed");
+
+        alert("✅ Eviction request submitted.");
+        e.target.reset();
+      } catch (err) {
+        console.error("❌ Eviction error:", err);
+        alert("❌ " + err.message);
+      }
+    });
+  </script>
 </body>
 </html>
