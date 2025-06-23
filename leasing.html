@@ -83,121 +83,124 @@
   </section>
 
   <script type="module">
-    import { backendURL } from './config.js';
+  import { backendURL } from './config.js';
 
-    document.getElementById("leaseForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
+  // === 📄 Lease Upload Handler ===
+  document.getElementById("leaseForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
 
-      const postalAddress = form["building-address"].value.trim();
-      const lrNumber = form["building-lr"].value.trim();
-      const leaseFile = form["lease-agreement"].files[0];
-      const phone = form["tenant-phone"].value.trim().replace(/\s+/g, "").replace(/^0/, "+254").replace(/^254/, "+254");
-      const tenantId = form["tenant-id"].value.trim();
+    const postalAddress = form["building-address"].value.trim();
+    const lrNumber = form["building-lr"].value.trim();
+    const leaseFile = form["lease-agreement"].files[0];
+    const phone = form["tenant-phone"].value.trim().replace(/\s+/g, "").replace(/^0/, "+254").replace(/^254/, "+254");
+    const tenantId = form["tenant-id"].value.trim();
 
-      if (!postalAddress || !lrNumber || !leaseFile || !tenantId || !phone) {
-        alert("❌ Please fill all required fields.");
-        return;
-      }
+    if (!postalAddress || !lrNumber || !leaseFile || !tenantId || !phone) {
+      alert("❌ Please fill all required fields.");
+      return;
+    }
 
-      if (!/^\+254(1\d{8}|7\d{8})$/.test(phone)) {
-        alert("❌ Invalid phone number format.");
-        return;
-      }
+    if (!/^\+254(1\d{8}|7\d{8})$/.test(phone)) {
+      alert("❌ Invalid phone number format.");
+      return;
+    }
 
-      formData.set("propertyId", `${postalAddress}|${lrNumber}`);
-      formData.set("leaseAgreement", leaseFile);
+    formData.set("propertyId", `${postalAddress}|${lrNumber}`);
+    formData.set("leaseAgreement", leaseFile);
 
-      try {
-        const uploadRes = await fetch(`${backendURL}/api/property/upload-lease`, {
-          method: "POST",
-          body: formData,
-        });
+    try {
+      const uploadRes = await fetch(`${backendURL}/api/property/upload-lease`, {
+        method: "POST",
+        body: formData,
+      });
 
-        let uploadResult;
-        try {
-          uploadResult = await uploadRes.json();
-        } catch (_) {
-          const errText = await uploadRes.text();
-          throw new Error("Lease upload failed: Invalid response format");
-        }
-
-        if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
-
-        const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
-        const smsRes = await fetch(`${backendURL}/api/sms`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ to: phone, message: `Dear tenant, access your lease here: ${leaseLink}` }),
-        });
-
-        let smsResult;
-        try {
-          smsResult = await smsRes.json();
-        } catch (_) {
-          const errText = await smsRes.text();
-          throw new Error("SMS sending failed: Invalid response format");
-        }
-
-        if (!smsRes.ok || smsResult.success === false) {
-          throw new Error("SMS failed: " + (smsResult.error || "Unknown error"));
-        }
-
-        alert("✅ Lease uploaded and SMS sent.");
-        form.reset();
-      } catch (err) {
-        console.error("❌ Lease error:", err);
-        alert("❌ " + err.message);
-      }
-    });
-
-    document.getElementById("evictionForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const tenantId = document.getElementById("evict-tenant-id").value.trim();
-      const address = document.getElementById("evict-address").value.trim();
-      const charges = document.getElementById("evict-charges").value.trim();
-      const magistrate = document.getElementById("magistrate-name").value.trim();
-      const jscId = document.getElementById("jsc-id").value.trim();
-      const dueDate = document.getElementById("evict-start-date").value;
-
-      if (!tenantId || !address || !charges || !magistrate || !jscId || !dueDate) {
-        alert("❌ Please fill in all fields.");
-        return;
-      }
+      const rawUpload = await uploadRes.text();
+      let uploadResult;
 
       try {
-        const response = await fetch(`${backendURL}/api/property/evict-tenant`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            tenantId,
-            address,
-            charges,
-            magistrate,
-            jscId,
-            dueDate
-          })
-        });
-
-        let result;
-        try {
-          result = await response.json();
-        } catch (_) {
-          const errText = await response.text();
-          throw new Error("Eviction failed: Invalid response format");
-        }
-
-        if (!response.ok) throw new Error(result.message || "Eviction failed");
-
-        alert("✅ Eviction request submitted.");
-        e.target.reset();
-      } catch (err) {
-        console.error("❌ Eviction error:", err);
-        alert("❌ " + err.message);
+        uploadResult = JSON.parse(rawUpload);
+      } catch (_) {
+        throw new Error("Lease upload failed: " + rawUpload);
       }
-    });
-  </script>
+
+      if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
+
+      const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
+
+      const smsRes = await fetch(`${backendURL}/api/sms`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: phone,
+          message: `Dear tenant, access your lease here: ${leaseLink}`
+        }),
+      });
+
+      const rawSms = await smsRes.text();
+      let smsResult;
+
+      try {
+        smsResult = JSON.parse(rawSms);
+      } catch (_) {
+        throw new Error("SMS failed: " + rawSms);
+      }
+
+      if (!smsRes.ok || smsResult.success === false) {
+        throw new Error("SMS failed: " + (smsResult.error || "Unknown error"));
+      }
+
+      alert("✅ Lease uploaded and SMS sent.");
+      form.reset();
+    } catch (err) {
+      console.error("❌ Lease error:", err);
+      alert("❌ " + err.message);
+    }
+  });
+
+  // === 🚫 Tenant Eviction Handler ===
+  document.getElementById("evictionForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const tenantId = document.getElementById("evict-tenant-id").value.trim();
+    const address = document.getElementById("evict-address").value.trim();
+    const charges = document.getElementById("evict-charges").value.trim();
+    const magistrate = document.getElementById("magistrate-name").value.trim();
+    const jscId = document.getElementById("jsc-id").value.trim();
+    const dueDate = document.getElementById("evict-start-date").value;
+
+    if (!tenantId || !address || !charges || !magistrate || !jscId || !dueDate) {
+      alert("❌ Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${backendURL}/api/property/evict-tenant`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantId, address, charges, magistrate, jscId, dueDate }),
+      });
+
+      const raw = await response.text();
+      let result;
+
+      try {
+        result = JSON.parse(raw);
+      } catch (_) {
+        throw new Error("Eviction failed: " + raw);
+      }
+
+      if (!response.ok) throw new Error(result.message || "Eviction failed");
+
+      alert("✅ Eviction request submitted.");
+      e.target.reset();
+    } catch (err) {
+      console.error("❌ Eviction error:", err);
+      alert("❌ " + err.message);
+    }
+  });
+</script>
+
 </body>
 </html>
