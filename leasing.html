@@ -85,7 +85,6 @@
   <script type="module">
     import { backendURL } from './config.js';
 
-    // ✅ Lease Form Submission
     document.getElementById("leaseForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const form = e.target;
@@ -116,7 +115,14 @@
           body: formData,
         });
 
-        const uploadResult = await uploadRes.json();
+        let uploadResult;
+        try {
+          uploadResult = await uploadRes.json();
+        } catch (_) {
+          const errText = await uploadRes.text();
+          throw new Error("Lease upload failed: Invalid response format");
+        }
+
         if (!uploadRes.ok) throw new Error(uploadResult.message || "Lease upload failed");
 
         const leaseLink = `https://yourdomain.com/lease-review?tenant=${encodeURIComponent(tenantId)}`;
@@ -126,7 +132,14 @@
           body: JSON.stringify({ to: phone, message: `Dear tenant, access your lease here: ${leaseLink}` }),
         });
 
-        const smsResult = await smsRes.json();
+        let smsResult;
+        try {
+          smsResult = await smsRes.json();
+        } catch (_) {
+          const errText = await smsRes.text();
+          throw new Error("SMS sending failed: Invalid response format");
+        }
+
         if (!smsRes.ok || smsResult.success === false) {
           throw new Error("SMS failed: " + (smsResult.error || "Unknown error"));
         }
@@ -139,7 +152,6 @@
       }
     });
 
-    // ✅ Eviction Form Submission
     document.getElementById("evictionForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -169,7 +181,14 @@
           })
         });
 
-        const result = await response.json();
+        let result;
+        try {
+          result = await response.json();
+        } catch (_) {
+          const errText = await response.text();
+          throw new Error("Eviction failed: Invalid response format");
+        }
+
         if (!response.ok) throw new Error(result.message || "Eviction failed");
 
         alert("✅ Eviction request submitted.");
