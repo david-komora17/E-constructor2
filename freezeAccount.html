@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -28,8 +28,51 @@
     <div id="responseMsg" class="mt-4"></div>
   </div>
 
-  <script>
-    
+  <script type="module">
+    import { backendURL } from './config.js'; // Make sure this exists in the same folder
+
+    const form = document.getElementById('freezeForm');
+    const msg = document.getElementById('responseMsg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const landlordId = document.getElementById('landlordId').value.trim();
+      const buildingId = document.getElementById('buildingId').value.trim();
+      let magistratePhone = document.getElementById('magistratePhone').value.trim();
+
+      if (!landlordId || !buildingId || !magistratePhone) {
+        msg.innerHTML = `<div class="alert alert-danger">❌ All fields are required.</div>`;
+        return;
+      }
+
+      // Normalize phone format
+      magistratePhone = magistratePhone.replace(/\s+/g, '').replace(/^0/, '+254').replace(/^254/, '+254');
+
+      try {
+        const res = await fetch(`${backendURL}/api/mpesa/freeze`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            landlordId,
+            reason: `Multiple tenant complaints from building ${buildingId}`,
+            magistratePhone,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.success === false) {
+          throw new Error(data.message || 'Failed to freeze account');
+        }
+
+        msg.innerHTML = `<div class="alert alert-success">✅ ${data.message}</div>`;
+        form.reset();
+      } catch (error) {
+        msg.innerHTML = `<div class="alert alert-danger">❌ ${error.message}</div>`;
+        console.error(error);
+      }
+    });
   </script>
 </body>
 </html>
