@@ -153,7 +153,7 @@
           if (!rf.ok) throw new Error(rd.message);
 
           // Get freeze estimate
-          const ts = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${b}`);
+          const ts = await fetch('https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/666cf122fc1e8f1beacdd9ab');
           const td = await ts.json();
           if (!ts.ok) throw new Error(td.message);
           const { activeTenants, totalToFreeze } = td;
