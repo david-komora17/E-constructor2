@@ -145,7 +145,6 @@
     
   </main>
   <script>
-    // JavaScript logic to handle landlord negligence report and freezing process
 document.addEventListener("DOMContentLoaded", function () {
   const reportForm = document.getElementById("report-form");
 
@@ -157,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const evidenceFile = reportForm.querySelector("input[name='evidence']").files[0];
 
     if (!buildingId || !issueDescription || !evidenceFile) {
-      alert("All fields are required, including an image.");
+      alert("All fields are required, including photo evidence.");
       return;
     }
 
@@ -167,42 +166,45 @@ document.addEventListener("DOMContentLoaded", function () {
     formData.append("evidence", evidenceFile);
 
     try {
+      // Step 1: Submit the report
       const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
         method: "POST",
         body: formData
       });
-
       const reportData = await reportRes.json();
       if (!reportRes.ok) throw new Error(reportData.message);
 
-      const freezeRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/freeze", {
+      // Step 2: Get estimated freeze amount from backend
+      const tenantStatsRes = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${buildingId}`);
+      const tenantStats = await tenantStatsRes.json();
+      if (!tenantStatsRes.ok) throw new Error(tenantStats.message);
+
+      const { activeTenants, rentPerTenant, totalToFreeze } = tenantStats;
+
+      // Step 3: Trigger freeze logic with exact amount
+      const freezeRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ buildingId })
+        body: JSON.stringify({
+          landlordId: reportData.landlordId,
+          amount: totalToFreeze,
+          reason: `Negligence report affecting ${activeTenants} tenants`
+        })
       });
 
       const freezeData = await freezeRes.json();
       if (!freezeRes.ok) throw new Error(freezeData.message);
 
-      const depositsRes = await fetch(`/api/tenant-deposits?buildingId=${buildingId}`);
-      const depositData = await depositsRes.json();
-      if (!depositsRes.ok) throw new Error(depositData.message);
-
-      const { totalDeposits, tenantCount } = depositData;
-      const compensationAmount = totalDeposits + totalDeposits * 0.10;
-
-      alert(`✅ Report submitted. Estimated compensation: KES ${compensationAmount}. Awaiting magistrate approval.`);
-
+      alert(`✅ Freeze initiated for KES ${totalToFreeze} affecting ${activeTenants} tenant(s). Awaiting magistrate review.`);
       reportForm.reset();
 
     } catch (err) {
-      console.error("Error:", err);
-      alert("❌ Failed to submit report: " + err.message);
+      console.error("❌ Error:", err);
+      alert("❌ Failed to process report: " + err.message);
     }
   });
 });
-
- </script>
+</script>
 
 </body>
 </html>
