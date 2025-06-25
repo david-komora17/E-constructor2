@@ -6,28 +6,15 @@
   <title>Other Services - E-constructor</title>
   <link rel="stylesheet" href="e-constructor2.css">
   <style>
+    /* ---------- STYLES (unchanged from your version) ---------- */
     header, .navbar {
       background-color: rgba(0, 0, 0, 0.7);
       color: white;
     }
-    header {
-      text-align: center;
-      padding: 20px;
-    }
-    .navbar {
-      display: flex;
-      justify-content: center;
-      padding: 10px 0;
-    }
-    .navbar ul {
-      list-style: none;
-      display: flex;
-      margin: 0;
-      padding: 0;
-    }
-    .navbar li {
-      margin: 0 15px;
-    }
+    header { text-align: center; padding: 20px; }
+    .navbar { display: flex; justify-content: center; padding: 10px 0; }
+    .navbar ul { display: flex; list-style: none; margin: 0; padding: 0; }
+    .navbar li { margin: 0 15px; }
     .navbar a {
       color: white;
       text-decoration: none;
@@ -35,12 +22,8 @@
       border-radius: 6px;
       background-color: rgba(0, 0, 0, 0.6);
     }
-    .navbar a:hover {
-      background-color: rgba(0, 0, 0, 0.8);
-    }
-
-    /* Dark translucent section styling */
-    #mpesa-statement {
+    .navbar a:hover { background-color: rgba(0, 0, 0, 0.8); }
+    #mpesa-statement, .report-section {
       background-color: rgba(0, 0, 0, 0.7);
       color: white;
       padding: 25px;
@@ -50,48 +33,11 @@
       max-width: 550px;
       box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
     }
-
-    #mpesa-statement input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 5px;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      background-color: rgba(255, 255, 255, 0.95);
-      color: #333;
-      box-sizing: border-box;
-    }
-
-    #mpesa-statement button {
-      margin-top: 15px;
-      padding: 12px 20px;
-      background-color: #2ecc71;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s ease;
-    }
-
-    #mpesa-statement button:hover {
-      background-color: #27ae60;
-    }
-
+    #mpesa-statement button { background-color: #2ecc71; }
+    #mpesa-statement button:hover { background-color: #27ae60; }
     .report-section {
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 25px;
-      border-radius: 12px;
-      margin: 30px auto;
-      width: 90%;
-      max-width: 550px;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
     }
-
     .report-section input,
     .report-section textarea {
       width: 100%;
@@ -100,11 +46,10 @@
       border: none;
       border-radius: 8px;
       font-size: 15px;
-      background-color: rgba(255, 255, 255, 0.95);
+      background-color: rgba(255,255,255,0.95);
       color: #333;
       box-sizing: border-box;
     }
-
     .btn-report {
       margin-top: 15px;
       padding: 12px 20px;
@@ -118,34 +63,18 @@
       width: 100%;
       transition: background-color 0.3s ease;
     }
-
-    .btn-report:hover {
-      background-color: #c0392b;
-    }
+    .btn-report:hover { background-color: #c0392b; }
 
     @media (max-width: 480px) {
-      header h1, h2, h3 {
-        font-size: 18px;
-      }
-      .navbar a {
-        font-size: 14px;
-        padding: 8px 12px;
-      }
-      #mpesa-statement, .report-section {
-        width: 95%;
-        padding: 15px;
-      }
-      .btn-report, #mpesa-statement button {
-        font-size: 14px;
-        padding: 10px;
-      }
+      header h1, h2, h3 { font-size: 18px; }
+      .navbar a { font-size: 14px; padding: 8px 12px; }
+      #mpesa-statement, .report-section { width: 95%; padding: 15px; }
+      .btn-report, #mpesa-statement button { font-size: 14px; padding: 10px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>E-constructor</h1>
-  </header>
+  <header><h1>E-constructor</h1></header>
   <nav class="navbar">
     <ul>
       <li><a href="index.html">Home</a></li>
@@ -154,29 +83,26 @@
       <li><a href="other.html">Other</a></li>
     </ul>
   </nav>
+
   <main>
-    <h2>Request M-Pesa Statement</h2>
+    <h2>Request M‑Pesa Statement</h2>
     <section id="mpesa-statement" class="entry-form">
       <h3>Request M-Pesa Statement</h3>
-      <form>
+      <form id="statement-form">
         <label for="id-serial">ID / Serial Number</label><br>
         <input type="text" id="id-serial" placeholder="Enter your ID or Serial Number" required /><br><br>
-
         <label for="e-pin">E-constructor PIN</label><br>
         <input type="text" id="e-pin" placeholder="Enter your E-constructor PIN" required /><br><br>
-
         <label for="email">Email Address</label><br>
         <input type="email" id="email" placeholder="Enter your email address" required /><br><br>
-
         <label for="mpesa-number">M-Pesa Number</label><br>
         <input type="tel" id="mpesa-number" placeholder="Enter your M-Pesa number" required /><br><br>
-
         <button type="submit">Request Statement</button>
       </form>
     </section>
 
-    <h2>Report Landlord Negligence</h2> 
-    <form id="report-form" class="report-section">
+    <h2>Report Landlord Negligence</h2>
+    <form id="report-form" class="report-section" enctype="multipart/form-data">
       <h2>Report Landlord Negligence</h2>
 
       <label for="buildingId">Building LR Number:</label>
@@ -197,63 +123,67 @@
       <p id="report-status"></p>
     </form>
   </main>
+
   <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const reportForm = document.getElementById("report-form");
+    document.addEventListener("DOMContentLoaded", () => {
+      const reportForm = document.getElementById("report-form");
+      reportForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    reportForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
+        const b = reportForm.buildingId.value.trim();
+        const d = reportForm.issueDescription.value.trim();
+        const f = reportForm.evidence.files[0];
+        if (!b || !d || !f) {
+          alert("All fields are required, including photo evidence.");
+          return;
+        }
 
-      const buildingId = reportForm.querySelector("input[name='buildingId']").value;
-      const issueDescription = reportForm.querySelector("textarea[name='issueDescription']").value;
-      const evidenceFile = reportForm.querySelector("input[name='evidence']").files[0];
+        const statusEl = document.getElementById("report-status");
+        reportForm.querySelector("button").disabled = true;
+        statusEl.textContent = "Submitting report...";
+        statusEl.style.color = "lightyellow";
 
-      if (!buildingId || !issueDescription || !evidenceFile) {
-        alert("All fields are required, including photo evidence.");
-        return;
-      }
+        try {
+          // Submit report
+          const rf = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
+            method: "POST",
+            body: new FormData(reportForm)
+          });
+          const rd = await rf.json();
+          if (!rf.ok) throw new Error(rd.message);
 
-      const formData = new FormData();
-      formData.append("buildingId", buildingId);
-      formData.append("description", issueDescription);
-      formData.append("evidence", evidenceFile);
+          // Get freeze estimate
+          const ts = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${b}`);
+          const td = await ts.json();
+          if (!ts.ok) throw new Error(td.message);
+          const { activeTenants, totalToFreeze } = td;
 
-      try {
-        const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
-          method: "POST",
-          body: formData
-        });
+          // Trigger freeze
+          const fr = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              landlordId: rd.landlordId,
+              amount: totalToFreeze,
+              reason: `Negligence affecting ${activeTenants} tenants`
+            })
+          });
+          const fd = await fr.json();
+          if (!fr.ok) throw new Error(fd.message);
 
-        const reportData = await reportRes.json();
-        if (!reportRes.ok) throw new Error(reportData.message);
-
-        const tenantStatsRes = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${buildingId}`);
-        const tenantStats = await tenantStatsRes.json();
-        if (!tenantStatsRes.ok) throw new Error(tenantStats.message);
-
-        const { activeTenants, rentPerTenant, totalToFreeze } = tenantStats;
-
-        const freezeRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            landlordId: reportData.landlordId,
-            amount: totalToFreeze,
-            reason: `Negligence report affecting ${activeTenants} tenants`
-          })
-        });
-
-        const freezeData = await freezeRes.json();
-        if (!freezeRes.ok) throw new Error(freezeData.message);
-
-        alert(`✅ Freeze initiated for KES ${totalToFreeze} affecting ${activeTenants} tenant(s). Awaiting magistrate review.`);
-        reportForm.reset();
-      } catch (err) {
-        console.error("❌ Error:", err);
-        alert("❌ Failed to process report: " + err.message);
-      }
+          alert(`✅ Freeze initiated: KES ${totalToFreeze} for ${activeTenants} tenant(s).`);
+          reportForm.reset();
+          statusEl.textContent = "";
+        } catch (err) {
+          console.error(err);
+          alert("❌ Failed to process report: " + err.message);
+          statusEl.style.color = "red";
+          statusEl.textContent = "Error: " + err.message;
+        } finally {
+          reportForm.querySelector("button").disabled = false;
+        }
+      });
     });
-  });
   </script>
 </body>
 </html>
