@@ -38,50 +38,108 @@
     .navbar a:hover {
       background-color: rgba(0, 0, 0, 0.8);
     }
+
     /* Dark translucent section styling */
-#mpesa-statement {
-  background-color: rgba(0, 0, 0, 0.7); /* Dark translucent background */
-  color: white;
-  padding: 25px;
-  border-radius: 12px;
-  margin: 30px auto;
-  width: 90%;
-  max-width: 550px;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
-}
+    #mpesa-statement {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px auto;
+      width: 90%;
+      max-width: 550px;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+    }
 
-/* Input styling */
-#mpesa-statement input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  background-color: rgba(255, 255, 255, 0.95);
-  color: #333;
-  box-sizing: border-box;
-}
+    #mpesa-statement input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      background-color: rgba(255, 255, 255, 0.95);
+      color: #333;
+      box-sizing: border-box;
+    }
 
-/* Button styling */
-#mpesa-statement button {
-  margin-top: 15px;
-  padding: 12px 20px;
-  background-color: #2ecc71; /* Green */
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
+    #mpesa-statement button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      background-color: #2ecc71;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
 
-#mpesa-statement button:hover {
-  background-color: #27ae60;
-}
+    #mpesa-statement button:hover {
+      background-color: #27ae60;
+    }
 
+    .report-section {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px auto;
+      width: 90%;
+      max-width: 550px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+    }
+
+    .report-section input,
+    .report-section textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      background-color: rgba(255, 255, 255, 0.95);
+      color: #333;
+      box-sizing: border-box;
+    }
+
+    .btn-report {
+      margin-top: 15px;
+      padding: 12px 20px;
+      background-color: #e74c3c;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-report:hover {
+      background-color: #c0392b;
+    }
+
+    @media (max-width: 480px) {
+      header h1, h2, h3 {
+        font-size: 18px;
+      }
+      .navbar a {
+        font-size: 14px;
+        padding: 8px 12px;
+      }
+      #mpesa-statement, .report-section {
+        width: 95%;
+        padding: 15px;
+      }
+      .btn-report, #mpesa-statement button {
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -98,114 +156,104 @@
   </nav>
   <main>
     <h2>Request M-Pesa Statement</h2>
-    <form>
-      <section id="mpesa-statement" class="entry-form">
-        <h3>Request M-Pesa Statement</h3>
-        <form>
-          <label for="id-serial">ID / Serial Number</label><br>
-          <input type="text" id="id-serial" placeholder="Enter your ID or Serial Number" required /><br><br>
-      
-          <label for="e-pin">E-constructor PIN</label><br>
-          <input type="text" id="e-pin" placeholder="Enter your E-constructor PIN" required /><br><br>
-      
-          <label for="email">Email Address</label><br>
-          <input type="email" id="email" placeholder="Enter your email address" required /><br><br>
-      
-          <label for="mpesa-number">M-Pesa Number</label><br>
-          <input type="tel" id="mpesa-number" placeholder="Enter your M-Pesa number" required /><br><br>
-      
-          <button type="submit">Request Statement</button>
-        </form>
-      </section>
-      
-    </form>
+    <section id="mpesa-statement" class="entry-form">
+      <h3>Request M-Pesa Statement</h3>
+      <form>
+        <label for="id-serial">ID / Serial Number</label><br>
+        <input type="text" id="id-serial" placeholder="Enter your ID or Serial Number" required /><br><br>
+
+        <label for="e-pin">E-constructor PIN</label><br>
+        <input type="text" id="e-pin" placeholder="Enter your E-constructor PIN" required /><br><br>
+
+        <label for="email">Email Address</label><br>
+        <input type="email" id="email" placeholder="Enter your email address" required /><br><br>
+
+        <label for="mpesa-number">M-Pesa Number</label><br>
+        <input type="tel" id="mpesa-number" placeholder="Enter your M-Pesa number" required /><br><br>
+
+        <button type="submit">Request Statement</button>
+      </form>
+    </section>
+
     <h2>Report Landlord Negligence</h2> 
-    
     <form id="report-form" class="report-section">
       <h2>Report Landlord Negligence</h2>
-    
+
       <label for="buildingId">Building LR Number:</label>
       <input type="text" id="buildingId" name="buildingId" placeholder="Enter building LR number" required><br><br>
-    
+
       <label for="issueDescription">Describe the Issue:</label>
       <textarea id="issueDescription" name="issueDescription" placeholder="Describe the issue clearly" required></textarea><br><br>
-    
+
       <label for="evidence">Take or Upload Photo Evidence:</label>
       <input type="file" id="evidence" name="evidence" accept="image/*" capture="environment" required><br><br>
-      
+
       <label style="display: block; font-weight: bold; margin-top: 20px;">
         <input type="checkbox" name="spam_warning_ack" required>
         I understand that submitting a false or malicious complaint against a landlord is a criminal offense. If found guilty of sending a spam or fraudulent report, I may face legal penalties including fines or imprisonment under applicable laws.
       </label><br><br>
-      
+
       <button type="submit" class="btn-report">Submit Report</button>
-      
       <p id="report-status"></p>
-    </form>    
-    
+    </form>
   </main>
   <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const reportForm = document.getElementById("report-form");
+  document.addEventListener("DOMContentLoaded", function () {
+    const reportForm = document.getElementById("report-form");
 
-  reportForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
+    reportForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    const buildingId = reportForm.querySelector("input[name='buildingId']").value;
-    const issueDescription = reportForm.querySelector("textarea[name='issueDescription']").value;
-    const evidenceFile = reportForm.querySelector("input[name='evidence']").files[0];
+      const buildingId = reportForm.querySelector("input[name='buildingId']").value;
+      const issueDescription = reportForm.querySelector("textarea[name='issueDescription']").value;
+      const evidenceFile = reportForm.querySelector("input[name='evidence']").files[0];
 
-    if (!buildingId || !issueDescription || !evidenceFile) {
-      alert("All fields are required, including photo evidence.");
-      return;
-    }
+      if (!buildingId || !issueDescription || !evidenceFile) {
+        alert("All fields are required, including photo evidence.");
+        return;
+      }
 
-    const formData = new FormData();
-    formData.append("buildingId", buildingId);
-    formData.append("description", issueDescription);
-    formData.append("evidence", evidenceFile);
+      const formData = new FormData();
+      formData.append("buildingId", buildingId);
+      formData.append("description", issueDescription);
+      formData.append("evidence", evidenceFile);
 
-    try {
-      // Step 1: Submit the report
-      const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
-        method: "POST",
-        body: formData
-      });
-      const reportData = await reportRes.json();
-      if (!reportRes.ok) throw new Error(reportData.message);
+      try {
+        const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
+          method: "POST",
+          body: formData
+        });
 
-      // Step 2: Get estimated freeze amount from backend
-      const tenantStatsRes = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${buildingId}`);
-      const tenantStats = await tenantStatsRes.json();
-      if (!tenantStatsRes.ok) throw new Error(tenantStats.message);
+        const reportData = await reportRes.json();
+        if (!reportRes.ok) throw new Error(reportData.message);
 
-      const { activeTenants, rentPerTenant, totalToFreeze } = tenantStats;
+        const tenantStatsRes = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${buildingId}`);
+        const tenantStats = await tenantStatsRes.json();
+        if (!tenantStatsRes.ok) throw new Error(tenantStats.message);
 
-      // Step 3: Trigger freeze logic with exact amount
-      const freezeRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
-, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          landlordId: reportData.landlordId,
-          amount: totalToFreeze,
-          reason: `Negligence report affecting ${activeTenants} tenants`
-        })
-      });
+        const { activeTenants, rentPerTenant, totalToFreeze } = tenantStats;
 
-      const freezeData = await freezeRes.json();
-      if (!freezeRes.ok) throw new Error(freezeData.message);
+        const freezeRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            landlordId: reportData.landlordId,
+            amount: totalToFreeze,
+            reason: `Negligence report affecting ${activeTenants} tenants`
+          })
+        });
 
-      alert(`✅ Freeze initiated for KES ${totalToFreeze} affecting ${activeTenants} tenant(s). Awaiting magistrate review.`);
-      reportForm.reset();
+        const freezeData = await freezeRes.json();
+        if (!freezeRes.ok) throw new Error(freezeData.message);
 
-    } catch (err) {
-      console.error("❌ Error:", err);
-      alert("❌ Failed to process report: " + err.message);
-    }
+        alert(`✅ Freeze initiated for KES ${totalToFreeze} affecting ${activeTenants} tenant(s). Awaiting magistrate review.`);
+        reportForm.reset();
+      } catch (err) {
+        console.error("❌ Error:", err);
+        alert("❌ Failed to process report: " + err.message);
+      }
+    });
   });
-});
-</script>
-
+  </script>
 </body>
 </html>
