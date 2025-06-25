@@ -125,65 +125,75 @@
   </main>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const reportForm = document.getElementById("report-form");
-      reportForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+  document.addEventListener("DOMContentLoaded", () => {
+    const reportForm = document.getElementById("report-form");
 
-        const b = reportForm.buildingId.value.trim();
-        const d = reportForm.issueDescription.value.trim();
-        const f = reportForm.evidence.files[0];
-        if (!b || !d || !f) {
-          alert("All fields are required, including photo evidence.");
-          return;
-        }
+    reportForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-        const statusEl = document.getElementById("report-status");
-        reportForm.querySelector("button").disabled = true;
-        statusEl.textContent = "Submitting report...";
-        statusEl.style.color = "lightyellow";
+      const buildingId = reportForm.buildingId.value.trim();
+      const description = reportForm.issueDescription.value.trim();
+      const file = reportForm.evidence.files[0];
+      const statusEl = document.getElementById("report-status");
 
+      if (!buildingId || !description || !file) {
+        alert("All fields are required, including photo evidence.");
+        return;
+      }
+
+      reportForm.querySelector("button").disabled = true;
+      statusEl.textContent = "Submitting report...";
+      statusEl.style.color = "lightyellow";
+
+      try {
+        const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
+          method: "POST",
+          body: new FormData(reportForm)
+        });
+
+        const reportData = await reportRes.json();
+        if (!reportRes.ok) throw new Error(reportData.message || "Report failed");
+
+        const freezeRes = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${buildingId}`);
+        let freezeText = await freezeRes.text();
+
+        let freezeData;
         try {
-          // Submit report
-          const rf = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
-            method: "POST",
-            body: new FormData(reportForm)
-          });
-          const rd = await rf.json();
-          if (!rf.ok) throw new Error(rd.message);
-
-          // Get freeze estimate
-          const ts = await fetch('https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/666cf122fc1e8f1beacdd9ab');
-          const td = await ts.json();
-          if (!ts.ok) throw new Error(td.message);
-          const { activeTenants, totalToFreeze } = td;
-
-          // Trigger freeze
-          const fr = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              landlordId: rd.landlordId,
-              amount: totalToFreeze,
-              reason: `Negligence affecting ${activeTenants} tenants`
-            })
-          });
-          const fd = await fr.json();
-          if (!fr.ok) throw new Error(fd.message);
-
-          alert(`✅ Freeze initiated: KES ${totalToFreeze} for ${activeTenants} tenant(s).`);
-          reportForm.reset();
-          statusEl.textContent = "";
-        } catch (err) {
-          console.error(err);
-          alert("❌ Failed to process report: " + err.message);
-          statusEl.style.color = "red";
-          statusEl.textContent = "Error: " + err.message;
-        } finally {
-          reportForm.querySelector("button").disabled = false;
+          freezeData = JSON.parse(freezeText);
+        } catch (jsonErr) {
+          throw new Error("Unexpected response format from freeze estimate");
         }
-      });
+
+        if (!freezeRes.ok) throw new Error(freezeData.message || "Freeze estimate failed");
+
+        const { activeTenants, totalToFreeze } = freezeData;
+
+        const freezeReq = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            landlordId: reportData.landlordId,
+            amount: totalToFreeze,
+            reason: `Negligence affecting ${activeTenants} tenants`
+          })
+        });
+
+        const freezeResp = await freezeReq.json();
+        if (!freezeReq.ok) throw new Error(freezeResp.message || "Freeze initiation failed");
+
+        alert(`✅ Freeze initiated: KES ${totalToFreeze} for ${activeTenants} tenant(s).`);
+        reportForm.reset();
+        statusEl.textContent = "";
+      } catch (err) {
+        console.error("❌ Report failed:", err.message);
+        statusEl.textContent = "Error: " + err.message;
+        statusEl.style.color = "red";
+      } finally {
+        reportForm.querySelector("button").disabled = false;
+      }
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>
