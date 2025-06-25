@@ -182,7 +182,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const { activeTenants, rentPerTenant, totalToFreeze } = tenantStats;
 
       // Step 3: Trigger freeze logic with exact amount
-      const freezeRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze", {
+      const freezeRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
+, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
