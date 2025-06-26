@@ -146,6 +146,7 @@
       statusEl.style.color = "lightyellow";
 
       try {
+        // Step 1: Submit the report
         const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
           method: "POST",
           body: new FormData(reportForm)
@@ -154,33 +155,36 @@
         const reportData = await reportRes.json();
         if (!reportRes.ok) throw new Error(reportData.message || "Report failed");
 
+        // Step 2: Estimate freeze amount
         const freezeRes = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${buildingId}`);
-        let freezeText = await freezeRes.text();
+        const freezeText = await freezeRes.text();
 
         let freezeData;
         try {
           freezeData = JSON.parse(freezeText);
-        } catch (jsonErr) {
-          throw new Error("Unexpected response format from freeze estimate");
+        } catch {
+          throw new Error("Freeze estimate response was not valid JSON:\n" + freezeText);
         }
 
         if (!freezeRes.ok) throw new Error(freezeData.message || "Freeze estimate failed");
 
         const { activeTenants, totalToFreeze } = freezeData;
 
+        // Step 3: Request account freeze
         const freezeReq = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            landlordId: reportData.landlordId,
+            landlordId: reportData.landlordId || "unknown",
             amount: totalToFreeze,
-            reason: `Negligence affecting ${activeTenants} tenants`
+            reason: `Negligence affecting ${activeTenants} tenant(s)`
           })
         });
 
         const freezeResp = await freezeReq.json();
         if (!freezeReq.ok) throw new Error(freezeResp.message || "Freeze initiation failed");
 
+        // Success
         alert(`✅ Freeze initiated: KES ${totalToFreeze} for ${activeTenants} tenant(s).`);
         reportForm.reset();
         statusEl.textContent = "";
