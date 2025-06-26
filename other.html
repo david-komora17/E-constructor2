@@ -2,11 +2,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Other Services - E-constructor</title>
-  <link rel="stylesheet" href="e-constructor2.css" />
+  <link rel="stylesheet" href="e-constructor2.css">
   <style>
-    /* styles unchanged for brevity */
+    /* --- STYLES UNCHANGED --- */
+    header, .navbar { background-color: rgba(0, 0, 0, 0.7); color: white; }
+    header { text-align: center; padding: 20px; }
+    .navbar { display: flex; justify-content: center; padding: 10px 0; }
+    .navbar ul { display: flex; list-style: none; margin: 0; padding: 0; }
+    .navbar li { margin: 0 15px; }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+    .navbar a:hover { background-color: rgba(0, 0, 0, 0.8); }
+    #mpesa-statement, .report-section {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px auto;
+      width: 90%;
+      max-width: 550px;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+    }
+    #mpesa-statement button { background-color: #2ecc71; }
+    #mpesa-statement button:hover { background-color: #27ae60; }
+    .report-section { box-shadow: 0 0 10px rgba(255, 0, 0, 0.4); }
+    .report-section input,
+    .report-section textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      background-color: rgba(255,255,255,0.95);
+      color: #333;
+      box-sizing: border-box;
+    }
+    .btn-report {
+      margin-top: 15px;
+      padding: 12px 20px;
+      background-color: #e74c3c;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    .btn-report:hover { background-color: #c0392b; }
+    @media (max-width: 480px) {
+      header h1, h2, h3 { font-size: 18px; }
+      .navbar a { font-size: 14px; padding: 8px 12px; }
+      #mpesa-statement, .report-section { width: 95%; padding: 15px; }
+      .btn-report, #mpesa-statement button { font-size: 14px; padding: 10px; }
+    }
   </style>
 </head>
 <body>
@@ -21,21 +79,21 @@
   </nav>
 
   <main>
-    <!-- M-Pesa Statement Form -->
+    <!-- M-Pesa Statement Section -->
     <section id="mpesa-statement" class="entry-form">
       <h3>Request M-Pesa Statement</h3>
       <form id="statement-form">
-        <label for="id-serial">ID / Serial Number</label><br>
-        <input type="text" id="id-serial" required /><br><br>
+        <label for="id-serial">ID / Serial Number</label>
+        <input type="text" id="id-serial" placeholder="Enter your ID or Serial Number" required /><br><br>
 
-        <label for="e-pin">E-constructor PIN</label><br>
-        <input type="text" id="e-pin" required /><br><br>
+        <label for="e-pin">E-constructor PIN</label>
+        <input type="text" id="e-pin" placeholder="Enter your E-constructor PIN" required /><br><br>
 
-        <label for="email">Email Address</label><br>
-        <input type="email" id="email" required /><br><br>
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="Enter your email address" required /><br><br>
 
-        <label for="mpesa-number">M-Pesa Number</label><br>
-        <input type="tel" id="mpesa-number" required /><br><br>
+        <label for="mpesa-number">M-Pesa Number</label>
+        <input type="tel" id="mpesa-number" placeholder="Enter your M-Pesa number" required /><br><br>
 
         <button type="submit">Request Statement</button>
         <p id="statement-status"></p>
@@ -44,7 +102,7 @@
 
     <!-- Report Negligence Form -->
     <form id="report-form" class="report-section" enctype="multipart/form-data">
-      <h2>Report Landlord Negligence</h2>
+      <h3>Report Landlord Negligence</h3>
 
       <label for="buildingId">Building LR Number:</label>
       <input type="text" id="buildingId" name="buildingId" required><br><br>
@@ -57,7 +115,7 @@
 
       <label style="display: block; font-weight: bold;">
         <input type="checkbox" name="spam_warning_ack" required>
-        I understand submitting false complaints is a criminal offense.
+        I understand that submitting false or malicious complaints is a criminal offense.
       </label><br><br>
 
       <button type="submit" class="btn-report">Submit Report</button>
@@ -66,103 +124,100 @@
   </main>
 
   <script>
-    // Handle M-Pesa statement request (placeholder only)
+  document.addEventListener("DOMContentLoaded", () => {
+    // Handle M-Pesa statement (simulated)
     document.getElementById("statement-form").addEventListener("submit", (e) => {
       e.preventDefault();
       const status = document.getElementById("statement-status");
-      status.textContent = "✅ Statement request received. You’ll get it via email shortly.";
+      status.textContent = "✅ Request received. Your statement will be emailed shortly.";
       status.style.color = "lightgreen";
     });
 
-    // Report Landlord Negligence
-    document.addEventListener("DOMContentLoaded", () => {
-      const reportForm = document.getElementById("report-form");
+    // Handle report submission
+    const reportForm = document.getElementById("report-form");
 
-      reportForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    reportForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-        const buildingId = reportForm.buildingId.value.trim();
-        const description = reportForm.issueDescription.value.trim();
-        const file = reportForm.evidence.files[0];
-        const statusEl = document.getElementById("report-status");
+      const buildingId = reportForm.buildingId.value.trim();
+      const description = reportForm.issueDescription.value.trim();
+      const file = reportForm.evidence.files[0];
+      const statusEl = document.getElementById("report-status");
 
-        if (!buildingId || !description || !file) {
-          alert("All fields are required.");
-          return;
-        }
+      if (!buildingId || !description || !file) {
+        alert("All fields are required, including photo evidence.");
+        return;
+      }
 
-        reportForm.querySelector("button").disabled = true;
-        statusEl.textContent = "⏳ Submitting report...";
-        statusEl.style.color = "lightyellow";
+      reportForm.querySelector("button").disabled = true;
+      statusEl.textContent = "Submitting report...";
+      statusEl.style.color = "lightyellow";
 
+      try {
+        // Step 1: Submit report
+        const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
+          method: "POST",
+          body: new FormData(reportForm)
+        });
+
+        const reportText = await reportRes.text();
+        let reportData;
         try {
-          // Step 1: Report Submission
-          const reportRes = await fetch("https://e-constructor2-backend-clean.onrender.com/api/report", {
-            method: "POST",
-            body: new FormData(reportForm)
-          });
-
-          const reportText = await reportRes.text();
-          let reportData;
-
-          try {
-            reportData = JSON.parse(reportText);
-          } catch {
-            throw new Error("Report API returned non-JSON:\n" + reportText);
-          }
-
-          if (!reportRes.ok) throw new Error(reportData.message || "Report failed");
-
-          // Step 2: Freeze Estimate
-          const freezeRes = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${buildingId}`);
-          const freezeText = await freezeRes.text();
-
-          let freezeData;
-          try {
-            freezeData = JSON.parse(freezeText);
-          } catch {
-            throw new Error("Freeze estimate not valid JSON:\n" + freezeText);
-          }
-
-          if (!freezeRes.ok) throw new Error(freezeData.message || "Freeze estimate failed");
-
-          const { activeTenants, totalToFreeze } = freezeData;
-
-          // Step 3: Freeze Account
-          const freezeReq = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              landlordId: reportData.landlordId || "unknown",
-              amount: totalToFreeze,
-              reason: `Negligence affecting ${activeTenants} tenant(s)`
-            })
-          });
-
-          const freezeRespText = await freezeReq.text();
-          let freezeResp;
-
-          try {
-            freezeResp = JSON.parse(freezeRespText);
-          } catch {
-            throw new Error("Freeze response not JSON:\n" + freezeRespText);
-          }
-
-          if (!freezeReq.ok) throw new Error(freezeResp.message || "Freeze failed");
-
-          // All successful
-          alert(`✅ Freeze initiated: KES ${totalToFreeze} for ${activeTenants} tenant(s).`);
-          reportForm.reset();
-          statusEl.textContent = "";
-        } catch (err) {
-          console.error("❌", err.message);
-          statusEl.textContent = "Error: " + err.message;
-          statusEl.style.color = "red";
-        } finally {
-          reportForm.querySelector("button").disabled = false;
+          reportData = JSON.parse(reportText);
+        } catch {
+          throw new Error("Report response is not valid JSON:\n" + reportText);
         }
-      });
+
+        if (!reportRes.ok) throw new Error(reportData.message || "Report failed");
+
+        // Step 2: Get freeze estimate
+        const freezeRes = await fetch(`https://e-constructor2-backend-clean.onrender.com/api/property/freeze-estimate/${buildingId}`);
+        const freezeText = await freezeRes.text();
+        let freezeData;
+        try {
+          freezeData = JSON.parse(freezeText);
+        } catch {
+          throw new Error("Freeze estimate not valid JSON:\n" + freezeText);
+        }
+
+        if (!freezeRes.ok) throw new Error(freezeData.message || "Freeze estimate failed");
+
+        const { activeTenants, totalToFreeze } = freezeData;
+
+        // Step 3: Freeze account
+        const freezeReq = await fetch("https://e-constructor2-backend-clean.onrender.com/api/mpesa/freeze-account", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            landlordId: reportData.landlordId || "unknown",
+            amount: totalToFreeze,
+            reason: `Negligence affecting ${activeTenants} tenant(s)`
+          })
+        });
+
+        const freezeRespText = await freezeReq.text();
+        let freezeResp;
+        try {
+          freezeResp = JSON.parse(freezeRespText);
+        } catch {
+          throw new Error("Freeze response not valid JSON:\n" + freezeRespText);
+        }
+
+        if (!freezeReq.ok) throw new Error(freezeResp.message || "Freeze failed");
+
+        // All successful
+        alert(`✅ Freeze initiated: KES ${totalToFreeze} for ${activeTenants} tenant(s).`);
+        reportForm.reset();
+        statusEl.textContent = "";
+      } catch (err) {
+        console.error("❌ Report failed:", err.message);
+        statusEl.textContent = "Error: " + err.message;
+        statusEl.style.color = "red";
+      } finally {
+        reportForm.querySelector("button").disabled = false;
+      }
     });
+  });
   </script>
 </body>
 </html>
