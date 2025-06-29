@@ -197,40 +197,54 @@ footer {
   
   /* Footer */
   
-
-  .site-footer {
-  background-color: #004085;
-  color: white;
+.site-footer {
+  background-color: rgba(0, 0, 0, 0.6); /* Very light black for elegant transparency */
+  color: rgba(0, 0, 0, 0.8);
   padding: 30px 20px;
+  font-family: 'Segoe UI', sans-serif;
   font-size: 14px;
+  margin-top: 50px;
+  border-top: 1px solid rgba(46, 204, 113, 0.2); /* Green accent with light opacity */
 }
 
 .footer-container {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1000px;
+  margin: auto;
+  gap: 20px;
 }
 
 .footer-left h4 {
-  margin: 0 0 10px;
-  font-size: 18px;
+  color: rgba(39, 174, 96, 0.8); /* Elegant green with opacity */
+  margin-bottom: 8px;
+  font-size: 20px;
 }
 
 .footer-left p,
 .footer-right p {
   margin: 5px 0;
+  color: white; /* Dimmed text */
 }
 
 .footer-right a {
-  color: #ffc107;
+  color: rgba(39, 174, 96, 0.85); /* Slightly vivid green link */
   text-decoration: none;
 }
 
 .footer-right a:hover {
   text-decoration: underline;
 }
+
+@media (max-width: 600px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
 .entry-form {
   background-color: rgba(0, 0, 0, 0.7); /* dark translucent background */
   padding: 20px;
