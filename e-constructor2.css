@@ -28,7 +28,7 @@
   /* Navigation Bar */
   .navbar {
     background: rgba(0, 0, 0, 0.75);
-    padding: 10px;
+    padding: 10px 0;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   }
@@ -37,7 +37,7 @@
     list-style-type: none;
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 27px;
   }
   
   .navbar a {
